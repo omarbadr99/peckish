@@ -28,8 +28,11 @@
   --radius-cell: 12px; --radius-tile: 20px; --radius-card: 28px; --radius-sheet: 32px; --radius-screen: 44px; --radius-pill: 999px;
   --shadow-float: 0 10px 30px rgba(17, 17, 16, 0.1);
   --control-sm: 36px; --control-md: 40px; --control-lg: 56px;
-  --duration-tap: 120ms; --duration-fast: 200ms; --duration-base: 320ms; --duration-slow: 560ms; --duration-bloom: 900ms;
-  --ease-standard: cubic-bezier(0.2, 0, 0, 1); --ease-out: cubic-bezier(0.16, 1, 0.3, 1); --ease-in: cubic-bezier(0.4, 0, 1, 1); --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  /* Motion: press 160ms, small changes 200ms, enters 250ms, exits quicker than enters. Only drawers, toasts and finished moments run longer. */
+  --slow: 1; --duration-tap: calc(160ms * var(--slow)); --duration-fast: calc(200ms * var(--slow)); --duration-base: calc(250ms * var(--slow)); --duration-exit: calc(300ms * var(--slow)); --duration-toast: calc(400ms * var(--slow)); --duration-slow: calc(500ms * var(--slow)); --duration-bloom: calc(900ms * var(--slow));
+  /* Easing: ease-out for anything entering, leaving or answering a touch; ease-in-out for things moving on screen; the drawer curve for sheets. Never ease-in. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1); --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1); --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1); --ease-pop: cubic-bezier(0.34, 1.3, 0.64, 1);
+  --backdrop: #000000;
   --gl: max(var(--space-20), env(safe-area-inset-left, 0px)); --gr: max(var(--space-20), env(safe-area-inset-right, 0px));
   --fit: 1; color-scheme: light;
 }
@@ -93,28 +96,37 @@ i { font-style: normal; }
 .pad > .hscroll { margin-left: calc(-1 * var(--gl)); margin-right: calc(-1 * var(--gr)); padding-left: var(--gl); padding-right: var(--gr); }
 .boot { padding-top: var(--space-48); }
 
-/* Screens */
+/* Screens. Everything under a sheet sits in one layer that scales back while the sheet is up. */
+.backdrop, .under { position: absolute; inset: 0; }
+.backdrop { background: var(--backdrop); }
+.under { overflow: hidden; background: var(--surface-bg); transform-origin: 50% 50%; transition: transform var(--duration-slow) var(--ease-drawer), border-radius var(--duration-slow) var(--ease-drawer); }
+.under.pushed { transform: scale(0.94); border-radius: var(--radius-card); }
 .tabview, .screen { position: absolute; inset: 0; }
 .screen { display: flex; flex-direction: column; }
-.screen > .scroll { flex: 1; min-height: 0; animation: rise var(--duration-base) var(--ease-out); }
+.screen > .scroll { flex: 1; min-height: 0; animation: fade-in calc(150ms * var(--slow)) ease; }
 .body-tabs { padding-bottom: calc(112px + var(--sb)); }
 .dockbg { position: absolute; z-index: 3; left: 0; right: 0; bottom: 0; height: calc(46px + var(--sb)); background: var(--surface-bg); }
 .topbar { flex: none; display: flex; align-items: center; justify-content: space-between; gap: var(--space-12); min-height: calc(var(--control-md) + var(--space-12) + var(--st)); padding-top: calc(var(--space-12) + var(--st)); }
 .topbar .ticks { flex: 1; }
 .full { position: absolute; inset: 0; z-index: 20; display: flex; flex-direction: column; background: var(--surface-bg); color: var(--ink-primary); animation: fade-in var(--duration-base) var(--ease-out); }
 .full.grid-bg { background-image: radial-gradient(circle, var(--line-hair) 1px, transparent 1.4px); background-size: 14px 14px; background-position: 7px 7px; }
-.full.out, .ov.out { animation: fade-out var(--duration-fast) var(--ease-in) forwards; pointer-events: none; }
+.full.out { animation: fade-out var(--duration-fast) var(--ease-out) forwards; pointer-events: none; }
 .foot { flex: none; padding-top: var(--space-12); padding-bottom: calc(var(--space-16) + var(--sb)); }
 .flow-body, .onb-body { flex: 1; min-height: 0; }
 .flow-body { padding-top: var(--space-12); } .onb-body { padding-top: var(--space-24); }
 @keyframes fade-in { from { opacity: 0; } }
 @keyframes fade-out { to { opacity: 0; } }
-@keyframes rise { from { transform: translateY(12px); opacity: 0; } }
-@keyframes pop { from { transform: scale(0.4); opacity: 0; } }
+@keyframes rise { from { transform: translateY(8px); opacity: 0; } }
+@keyframes pop { from { transform: scale(0.9); opacity: 0; } }
+@keyframes swap { from { transform: translateY(8px); opacity: 0; filter: blur(8px); } }
 @keyframes floaty { from { transform: translateY(-5px); } to { transform: translateY(5px); } }
-@keyframes bloom { from { transform: scale(0.08); opacity: 0; } 30% { opacity: 1; } to { transform: scale(1); } }
-.pk-enter { animation: rise var(--duration-base) var(--ease-out); }
-.pk-pop { animation: pop var(--duration-base) var(--ease-spring); }
+@keyframes bloom { from { transform: scale(0.86); opacity: 0; } }
+.pk-enter { animation: rise var(--duration-base) var(--ease-out) backwards; }
+.pk-pop { animation: pop var(--duration-base) var(--ease-out) backwards; }
+.swap { animation: swap var(--duration-base) var(--ease-out); }
+/* First load only: the screen arrives in order, 30 to 50ms apart, and never blocks a tap. */
+.boot-seq > * { animation: rise var(--duration-base) var(--ease-out) backwards; }
+.boot-seq > :nth-child(2) { animation-delay: calc(50ms * var(--slow)); } .boot-seq > :nth-child(3) { animation-delay: calc(90ms * var(--slow)); } .boot-seq > :nth-child(4) { animation-delay: calc(120ms * var(--slow)); } .boot-seq > :nth-child(n+5) { animation-delay: calc(150ms * var(--slow)); }
 
 /* Food orb and the big blended glow used for finished moments */
 .orb { position: relative; flex: none; display: inline-block; isolation: isolate; }
@@ -134,42 +146,44 @@ i { font-style: normal; }
 .pk-aura--tile { border-radius: var(--radius-card); }
 
 /* Buttons */
-.pk-btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-8); flex: none; height: var(--control-lg); padding: 0 var(--space-24); border-radius: var(--radius-pill); background: var(--ink-primary); color: var(--ink-inverse); white-space: nowrap; text-align: center; transition: transform var(--duration-tap) var(--ease-standard), opacity var(--duration-fast) var(--ease-standard); }
+.pk-btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-8); flex: none; height: var(--control-lg); padding: 0 var(--space-24); border-radius: var(--radius-pill); background: var(--ink-primary); color: var(--ink-inverse); white-space: nowrap; text-align: center; transition: transform var(--duration-tap) var(--ease-out), opacity var(--duration-fast) var(--ease-out); }
 .pk-btn.grow { flex: 1 1 0; padding: 0 var(--space-12); }
 .pk-btn:active { transform: scale(0.97); }
-.pk-btn:disabled { opacity: 0.32; cursor: default; }
+.pk-btn:disabled { opacity: 0.32; cursor: default; } .pk-btn:disabled:active { transform: none; }
 .pk-btn--secondary { background: var(--surface-card); color: var(--ink-primary); }
 .pk-btn--secondary.is-on { background: var(--ink-primary); color: var(--ink-inverse); }
 .pk-btn--glass { background: color-mix(in srgb, var(--surface-inset) 70%, transparent); color: var(--ink-primary); border: 1px solid var(--line-hair); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); }
 .pk-btn--md { height: var(--control-md); padding: 0 var(--space-20); }
 .pk-btn--sm { height: var(--control-sm); padding: 0 var(--space-16); }
 .pk-btn--block { display: flex; width: 100%; }
-.pk-iconbtn { flex: none; display: inline-grid; place-items: center; width: var(--control-md); height: var(--control-md); border-radius: var(--radius-pill); background: var(--surface-card); color: var(--ink-primary); transition: transform var(--duration-tap) var(--ease-standard); }
+.pk-iconbtn { flex: none; display: inline-grid; place-items: center; width: var(--control-md); height: var(--control-md); border-radius: var(--radius-pill); background: var(--surface-card); color: var(--ink-primary); transition: transform var(--duration-tap) var(--ease-out); }
 .pk-iconbtn:active { transform: scale(0.94); }
-.pk-iconbtn:disabled { opacity: 0.32; cursor: default; }
+.pk-iconbtn:disabled { opacity: 0.32; cursor: default; } .pk-iconbtn:disabled:active { transform: none; }
 .pk-iconbtn.ghost { visibility: hidden; }
 .pk-iconbtn.big, .pk-iconbtn.x2 { width: var(--control-lg); height: var(--control-lg); text-align: center; }
 .headicon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--ink-primary); color: var(--ink-inverse); }
 
 /* Tab bar: the one floating element */
 .tabbar { position: absolute; z-index: 5; left: var(--gl); right: var(--gr); bottom: calc(var(--space-12) + var(--sb)); height: 64px; display: grid; grid-template-columns: repeat(4, 1fr); align-items: center; padding: 0 6px; border: 1px solid var(--line-hair); border-radius: var(--radius-pill); background: var(--surface-bg); box-shadow: var(--shadow-float); }
-.tab { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-4); height: 52px; border-radius: var(--radius-pill); color: var(--ink-secondary); transition: opacity var(--duration-fast) var(--ease-standard); }
-.tab[aria-current] { color: var(--ink-inverse); }
-.tab-ind { position: absolute; left: 6px; top: 5px; width: calc((100% - 12px) / 4); height: 52px; border-radius: var(--radius-pill); background: var(--ink-primary); transform: translateX(calc(var(--i) * 100%)); transition: transform var(--duration-base) var(--ease-spring); }
+.tab { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-4); height: 52px; border-radius: var(--radius-pill); color: var(--ink-secondary); transition: opacity var(--duration-fast) var(--ease-out); }
+.tab:active { opacity: 0.6; }
+.tabbar-on { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(4, 1fr); align-items: center; padding: 0 6px; border-radius: inherit; background: var(--ink-primary); pointer-events: none; clip-path: inset(5px calc(6px + (3 - var(--i)) * (100% - 12px) / 4) 5px calc(6px + var(--i) * (100% - 12px) / 4) round 999px); transition: clip-path var(--duration-base) var(--ease-out); }
+.tabbar-on .tab { color: var(--ink-inverse); }
 
 /* Small controls */
 .seg { position: relative; display: grid; grid-template-columns: repeat(var(--n), 1fr); height: 44px; padding: 4px; border-radius: var(--radius-pill); background: var(--surface-card); }
-.seg-thumb { position: absolute; left: 4px; top: 4px; bottom: 4px; width: calc((100% - 8px) / var(--n)); border-radius: var(--radius-pill); background: var(--surface-inset); transform: translateX(calc(var(--i) * 100%)); transition: transform var(--duration-base) var(--ease-spring); }
+.seg-thumb { position: absolute; left: 4px; top: 4px; bottom: 4px; width: calc((100% - 8px) / var(--n)); border-radius: var(--radius-pill); background: var(--surface-inset); transform: translateX(calc(var(--i) * 100%)); transition: transform var(--duration-fast) var(--ease-out); }
 .seg-opt { position: relative; text-align: center; color: var(--ink-secondary); border-radius: var(--radius-pill); } .seg-opt[aria-selected="true"] { color: var(--ink-primary); }
 .sw { position: relative; flex: none; width: 50px; height: 30px; border-radius: var(--radius-pill); background: var(--line-hair); }
-.sw-fill { position: absolute; inset: 0; border-radius: inherit; background: var(--accent); opacity: 0; transition: opacity var(--duration-fast) var(--ease-standard); } .sw.on .sw-fill { opacity: 1; }
-.sw-knob { position: absolute; left: 3px; top: 3px; width: 24px; height: 24px; border-radius: var(--radius-pill); background: var(--surface-inset); transition: transform var(--duration-base) var(--ease-spring); } .sw.on .sw-knob { transform: translateX(20px); }
+.sw-fill { position: absolute; inset: 0; border-radius: inherit; background: var(--accent); opacity: 0; transition: opacity var(--duration-fast) var(--ease-out); } .sw.on .sw-fill { opacity: 1; }
+.sw-knob { position: absolute; left: 3px; top: 3px; width: 24px; height: 24px; border-radius: var(--radius-pill); background: var(--surface-inset); transition: transform var(--duration-fast) var(--ease-out); } .sw.on .sw-knob { transform: translateX(20px); }
 .rowline, .optrow { display: flex; align-items: center; gap: var(--space-12); width: 100%; min-height: var(--control-lg); padding: var(--space-12) 0; border-bottom: 1px solid var(--line-hair); }
 .rowline.col { align-items: flex-start; } .rowline.stretch { align-items: stretch; }
 .optrow .food { width: 28px; text-align: center; }
 .ticks { display: flex; gap: var(--space-4); } .ticks i { flex: 1; height: 3px; border-radius: var(--radius-pill); background: var(--line-hair); } .ticks i.on { background: var(--ink-primary); }
 .stepper { display: flex; align-items: center; gap: var(--space-12); } .stepper-n { display: grid; place-items: center; min-width: 20px; }
-.tick { position: absolute; right: -3px; top: -3px; display: grid; place-items: center; width: 18px; height: 18px; border-radius: var(--radius-pill); background: var(--accent); color: var(--accent-ink); animation: pop var(--duration-base) var(--ease-spring); }
+.tick { position: absolute; right: -3px; top: -3px; display: grid; place-items: center; width: 18px; height: 18px; border-radius: var(--radius-pill); background: var(--accent); color: var(--accent-ink); }
+.pchip .tick, .rest-item .tick { animation: pop var(--duration-base) var(--ease-pop); }
 .tickbox { flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: var(--radius-pill); border: 1px solid var(--ink-tertiary); } .tickbox svg { opacity: 0; }
 .tickbox.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); } .tickbox.on svg { opacity: 1; }
 .radio { position: relative; flex: none; width: 22px; height: 22px; border-radius: var(--radius-pill); border: 1px solid var(--ink-tertiary); }
@@ -182,20 +196,20 @@ i { font-style: normal; }
 .thumb { position: relative; flex: none; display: inline-grid; place-items: center; border-radius: var(--radius-tile); background: var(--surface-card); color: var(--ink-secondary); }
 .avatar { flex: none; display: inline-grid; place-items: center; border-radius: var(--radius-pill); color: var(--ink-inverse); } .avatar.on { outline: 2px solid var(--ink-primary); outline-offset: 3px; }
 .bar { position: relative; height: 6px; border-radius: var(--radius-pill); background: var(--surface-card); overflow: hidden; }
-.bar i { position: absolute; inset: 0; border-radius: inherit; transform-origin: left center; transition: transform var(--duration-slow) var(--ease-out); }
+.bar i { position: absolute; inset: 0; border-radius: inherit; transform-origin: left center; transition: transform var(--duration-exit) var(--ease-out); }
 .bar-fill { background: var(--accent); } .bar-est { background: color-mix(in srgb, var(--accent) 38%, var(--surface-card)); }
-.toast { position: absolute; z-index: 60; left: var(--gl); right: var(--gr); bottom: calc(92px + var(--sb)); display: flex; align-items: center; gap: var(--space-12); min-height: 48px; padding: var(--space-8) var(--space-20); border-radius: var(--radius-pill); background: var(--ink-primary); color: var(--ink-inverse); }
+.toast { position: absolute; z-index: 60; left: var(--gl); right: var(--gr); bottom: calc(92px + var(--sb)); display: flex; align-items: center; gap: var(--space-12); min-height: 48px; padding: var(--space-8) var(--space-20); border-radius: var(--radius-pill); background: var(--ink-primary); color: var(--ink-inverse); touch-action: none; transform: translateY(calc(100% + 24px)); opacity: 0; transition: transform var(--duration-fast) ease, opacity var(--duration-fast) ease; }
+.toast.in { transform: none; opacity: 1; transition: transform var(--duration-toast) ease, opacity var(--duration-toast) ease; }
 .toast-act { flex: none; text-decoration: underline; text-underline-offset: 3px; }
 
 /* Sheets */
-.ov { position: absolute; inset: 0; z-index: 20; display: flex; flex-direction: column; justify-content: flex-end; animation: fade-in var(--duration-fast) var(--ease-out); }
-.scrim { position: absolute; inset: 0; background: var(--scrim); }
-.sheet { position: relative; display: flex; flex-direction: column; max-height: calc(100% - var(--space-48) - var(--st)); background: var(--surface-bg); color: var(--ink-primary); border-radius: var(--radius-sheet) var(--radius-sheet) 0 0; animation: sheet-in var(--duration-slow) var(--ease-out); }
+.ov { position: absolute; inset: 0; z-index: 20; display: flex; flex-direction: column; justify-content: flex-end; } .ov.out { pointer-events: none; }
+.scrim { position: absolute; inset: 0; background: var(--scrim); opacity: 0; transition: opacity var(--duration-exit) var(--ease-drawer); } .ov.open .scrim { opacity: 1; transition-duration: var(--duration-slow); }
+.sheet { position: relative; display: flex; flex-direction: column; max-height: calc(100% - var(--space-48) - var(--st)); background: var(--surface-bg); color: var(--ink-primary); border-radius: var(--radius-sheet) var(--radius-sheet) 0 0; transform: translateY(100%); transition: transform var(--duration-exit) var(--ease-drawer); will-change: transform; } .ov.open .sheet { transform: none; transition-duration: var(--duration-slow); }
 .sheet--full { height: calc(100% - var(--space-32) - var(--st)); }
 .sheet .scroll { flex: 1 1 auto; min-height: 0; }
-.sheet-grab { flex: none; display: grid; place-items: center; height: 28px; touch-action: none; cursor: grab; } .sheet-grab i { width: 36px; height: 4px; border-radius: var(--radius-pill); background: var(--line-hair); }
+.sheet-grab { position: relative; flex: none; display: grid; place-items: center; height: 28px; touch-action: none; cursor: grab; } .sheet-grab::before { content: ""; position: absolute; inset: -6px 0 -14px; } .sheet-grab i { width: 36px; height: 4px; border-radius: var(--radius-pill); background: var(--line-hair); }
 .sheet-pad { padding-bottom: calc(var(--space-20) + var(--sb)); }
-@keyframes sheet-in { from { transform: translateY(100%); } }
 
 /* Dial and arc picker */
 .dial-win { position: relative; height: 96px; }
@@ -219,23 +233,26 @@ i { font-style: normal; }
 .cel-body { position: absolute; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; padding-bottom: calc(var(--space-32) + var(--sb)); }
 .cel-meta { margin: 0 0 var(--space-12) var(--space-4); } .cel-number { margin-left: var(--space-4); } .cel-line { max-width: 330px; margin: var(--space-20) var(--space-4) var(--space-32); }
 .celebrate.is-playing .cel-bloom { animation: bloom var(--duration-bloom) var(--ease-out) both; }
-.celebrate.is-playing .cel-aura { animation: bloom var(--duration-bloom) var(--ease-spring) both; }
-.celebrate.is-playing .cel-meta { animation: rise var(--duration-base) var(--ease-out) 500ms both; }
-.celebrate.is-playing .cel-number { animation: rise var(--duration-base) var(--ease-out) 600ms both; }
-.celebrate.is-playing .cel-line { animation: rise var(--duration-base) var(--ease-out) 1300ms both; }
-.celebrate.is-playing .cel-action { animation: rise var(--duration-base) var(--ease-out) 1700ms both; }
+.celebrate.is-playing .cel-aura { animation: bloom var(--duration-bloom) var(--ease-out) both; }
+.celebrate.is-playing .cel-meta { animation: rise var(--duration-base) var(--ease-out) calc(500ms * var(--slow)) both; }
+.celebrate.is-playing .cel-number { animation: rise var(--duration-base) var(--ease-out) calc(600ms * var(--slow)) both; }
+.celebrate.is-playing .cel-line { animation: rise var(--duration-base) var(--ease-out) calc(1300ms * var(--slow)) both; }
+.celebrate.is-playing .cel-action { animation: rise var(--duration-base) var(--ease-out) calc(1700ms * var(--slow)) both; }
 
 /* Onboarding and home */
-.whopick { display: flex; flex-direction: column; align-items: center; gap: var(--space-12); padding: var(--space-4); transition: opacity var(--duration-fast) var(--ease-standard); } .whopick:not(.on) { opacity: 0.45; }
+.whopick { display: flex; flex-direction: column; align-items: center; gap: var(--space-12); padding: var(--space-4); transition: opacity var(--duration-fast) var(--ease-out); } .whopick:not(.on) { opacity: 0.45; }
 .whoami { flex: none; display: flex; align-items: center; gap: var(--space-8); height: var(--control-md); padding: 0 var(--space-12) 0 var(--space-4); border-radius: var(--radius-pill); background: var(--surface-card); }
 .days { display: flex; justify-content: space-between; padding-bottom: var(--space-8); }
 .day { position: relative; display: grid; place-items: center; width: 36px; height: 36px; border-radius: var(--radius-pill); background: var(--surface-card); color: var(--ink-secondary); text-align: center; }
 .day.on { background: var(--ink-primary); color: var(--ink-inverse); }
 .day.ok::after { content: ""; position: absolute; left: 50%; bottom: -8px; width: 5px; height: 5px; margin-left: -2.5px; border-radius: var(--radius-pill); background: var(--accent); }
 .days.sm { padding: 0 var(--space-4); } .days.sm .day { width: 28px; height: 28px; } .days.sm .day.ok::after { bottom: -8px; }
+.days.sm .day::before { content: ""; position: absolute; inset: -8px -4px; }
+.hint, .optrow, .keeprow, .whoami, .rest-item .orb, .cell .orb, .pickitem > :first-child { transition: transform var(--duration-tap) var(--ease-out), opacity var(--duration-tap) var(--ease-out); }
+.hint:active, .whoami:active { transform: scale(0.98); } .optrow:active, .keeprow:active { opacity: 0.6; } .rest-item:active .orb, .cell:active .orb, .pickitem:active > :first-child { transform: scale(0.94); }
 .hint { display: flex; align-items: center; gap: var(--space-12); width: 100%; min-height: 52px; padding: var(--space-12) var(--space-16) var(--space-12) var(--space-20); border-radius: var(--radius-card); background: var(--surface-card); }
 .hero-top { display: flex; align-items: flex-start; justify-content: space-between; min-height: 156px; }
-.hero-food { flex: none; display: block; border-radius: 50%; transition: transform var(--duration-base) var(--ease-spring); } .hero-food:active { transform: scale(0.96); }
+.hero-food { flex: none; display: block; border-radius: 50%; transition: transform var(--duration-tap) var(--ease-out); } .hero-food:active { transform: scale(0.97); }
 .nudge { padding-top: var(--space-16); }
 .rest { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-12); }
 .rest-item { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-4); min-width: 0; } .rest-item .orb { margin-bottom: var(--space-4); }
@@ -255,14 +272,14 @@ i { font-style: normal; }
 
 /* Plan flow */
 .keeprow { display: flex; align-items: center; gap: var(--space-16); width: 100%; padding: var(--space-12) 0; border-bottom: 1px solid var(--line-hair); }
-.keeprow .orb, .keeprow .v2-title { transition: opacity var(--duration-fast) var(--ease-standard); } .keeprow.off .orb, .keeprow.off .v2-title { opacity: 0.32; }
+.keeprow .orb, .keeprow .v2-title { transition: opacity var(--duration-fast) var(--ease-out); } .keeprow.off .orb, .keeprow.off .v2-title { opacity: 0.32; }
 .orbit { position: relative; flex: none; align-self: center; width: 330px; height: 356px; }
 .orbit-lines { position: absolute; left: 0; top: 0; width: 330px; height: 330px; }
 .orbit-ring { fill: none; stroke: var(--ink-tertiary); stroke-width: 1; stroke-dasharray: 1 7; stroke-linecap: round; }
-.orbit-line { stroke: var(--ink-primary); stroke-width: 1.5; stroke-dasharray: 122; stroke-dashoffset: 122; transition: stroke-dashoffset var(--duration-slow) var(--ease-out); } .orbit-line.on { stroke-dashoffset: 0; }
+.orbit-line { stroke: var(--ink-primary); stroke-width: 1.5; stroke-dasharray: 122; stroke-dashoffset: 122; transition: stroke-dashoffset var(--duration-exit) var(--ease-out); } .orbit-line.on { stroke-dashoffset: 0; }
 .orbit-core { position: absolute; left: 165px; top: 165px; display: grid; place-items: center; width: 78px; height: 78px; margin: -39px 0 0 -39px; border-radius: 50%; background: var(--ink-primary); color: var(--ink-inverse); }
-.pchip { position: absolute; display: flex; flex-direction: column; align-items: center; gap: var(--space-4); width: 84px; margin: -33px 0 0 -42px; transition: opacity var(--duration-fast) var(--ease-standard); } .pchip.dim { opacity: 0.38; }
-.pchip-o { position: relative; display: block; height: 66px; transition: transform var(--duration-base) var(--ease-spring); }
+.pchip { position: absolute; display: flex; flex-direction: column; align-items: center; gap: var(--space-4); width: 84px; margin: -33px 0 0 -42px; transition: opacity var(--duration-fast) var(--ease-out); } .pchip.dim { opacity: 0.38; }
+.pchip-o { position: relative; display: block; height: 66px; transition: transform var(--duration-fast) var(--ease-pop); }
 .pchip.on .pchip-o { transform: scale(1.12); } .pchip:active .pchip-o { transform: scale(0.94); }
 .pchip .v2-label { padding: 1px var(--space-8); border-radius: var(--radius-pill); background: var(--surface-bg); }
 .pchip-mint { position: absolute; right: 1px; top: 1px; width: 12px; height: 12px; border: 2px solid var(--surface-bg); }
@@ -271,7 +288,7 @@ i { font-style: normal; }
 .trayitem i { position: absolute; right: -8px; top: -6px; padding: 0 var(--space-4); border-radius: var(--radius-pill); background: var(--ink-primary); color: var(--ink-inverse); }
 .deck { position: relative; flex: 1; min-height: 300px; margin: 0 var(--gr) var(--space-24) var(--gl); }
 .deck-end { position: absolute; left: 0; right: 0; bottom: var(--space-24); }
-.card { position: absolute; inset: 0; border-radius: var(--radius-card); background: linear-gradient(168deg, var(--o1) 0%, var(--o2) 135%); touch-action: none; cursor: grab; transform-origin: 50% 100%; transition: transform var(--duration-base) var(--ease-spring); }
+.card { position: absolute; inset: 0; border-radius: var(--radius-card); background: linear-gradient(168deg, var(--o1) 0%, var(--o2) 135%); overflow: hidden; touch-action: none; cursor: grab; transform-origin: 50% 100%; transition: transform var(--duration-base) var(--ease-out); }
 .card.c1 { transform: translateY(10px) scale(0.94); } .card.c2 { transform: translateY(20px) scale(0.88); }
 .card-in { position: absolute; inset: 0; display: flex; flex-direction: column; gap: var(--space-12); padding: var(--space-20); transition: opacity var(--duration-base) var(--ease-out); }
 .card.c1 .card-in, .card.c2 .card-in { opacity: 0; }
@@ -283,6 +300,9 @@ i { font-style: normal; }
 .heart { flex: none; display: grid; place-items: center; width: var(--control-md); height: var(--control-md); margin: -10px -10px -10px 0; border-radius: var(--radius-pill); } .heart.on svg { fill: currentColor; }
 .stamp { position: absolute; top: 60px; padding: var(--space-8) var(--space-16); border-radius: var(--radius-pill); background: var(--ink-primary); color: var(--ink-inverse); opacity: 0; pointer-events: none; }
 .stamp-yes { left: var(--space-20); background: var(--accent); color: var(--accent-ink); } .stamp-no { right: var(--space-20); }
+/* Hold to never see a meal again: a fill wipes across while the finger stays down, and snaps back if it lifts. */
+.hold { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; gap: var(--space-8); padding: var(--space-20); background: var(--ink-primary); color: var(--ink-inverse); pointer-events: none; clip-path: inset(0 100% 0 0); transition: clip-path var(--duration-fast) var(--ease-out); }
+.card.holding { transform: scale(0.97); } .card.holding .hold { clip-path: inset(0 0 0 0); transition: clip-path calc(900ms * var(--slow)) linear; }
 .deck-actions { flex: none; padding-bottom: calc(var(--space-16) + var(--sb)); }
 .timer { color: var(--ink-primary); }
 .pickitem { flex: none; display: flex; flex-direction: column; align-items: center; gap: var(--space-8); width: 68px; text-align: center; } .pickitem.on .thumb { outline: 2px solid var(--ink-primary); outline-offset: 2px; }
@@ -299,12 +319,12 @@ i { font-style: normal; }
 .timerbtn { align-self: flex-start; display: flex; align-items: center; gap: var(--space-12); padding: var(--space-8) var(--space-20) var(--space-8) var(--space-8); border-radius: var(--radius-pill); background: var(--surface-card); }
 .pcol { flex: none; width: 68px; justify-content: flex-end; text-align: right; }
 .faces { display: flex; justify-content: space-between; }
-.facebtn { display: grid; place-items: center; width: 56px; height: 56px; border-radius: var(--radius-pill); background: var(--surface-card); color: var(--ink-secondary); transition: transform var(--duration-base) var(--ease-spring); }
+.facebtn { display: grid; place-items: center; width: 56px; height: 56px; border-radius: var(--radius-pill); background: var(--surface-card); color: var(--ink-secondary); transition: transform var(--duration-fast) var(--ease-pop); }
 .facebtn:active { transform: scale(0.94); } .facebtn.on { background: var(--ink-primary); color: var(--ink-inverse); transform: scale(1.1); }
 .plate-row { align-items: center; }
 .plate { position: relative; flex: none; width: 168px; height: 168px; } .plate svg { display: block; }
 .sector { fill: var(--surface-card); opacity: 0; transition: opacity var(--duration-base) var(--ease-out); } .sector.on { opacity: 1; }
-.plate-it { position: absolute; display: grid; place-items: center; width: 32px; height: 32px; margin: -16px 0 0 -16px; animation: pop var(--duration-base) var(--ease-spring); }
+.plate-it { position: absolute; display: grid; place-items: center; width: 32px; height: 32px; margin: -16px 0 0 -16px; animation: pop var(--duration-base) var(--ease-out); }
 
 /* Groceries and the snack photo */
 .gwrap { position: relative; overflow: hidden; }
@@ -314,10 +334,18 @@ i { font-style: normal; }
 .viewfinder { position: relative; flex: none; display: flex; align-items: flex-end; justify-content: center; height: 260px; padding: var(--space-16); border-radius: var(--radius-card); overflow: hidden; background: var(--surface-card); }
 .vf-aura, .viewfinder img { position: absolute; inset: 0; width: 100%; height: 100%; } .viewfinder img { object-fit: cover; } .vf-btn { position: relative; }
 
+@media (hover: hover) and (pointer: fine) {
+  .pk-btn:not(:disabled):hover { opacity: 0.88; } .pk-iconbtn:not(:disabled):hover, .hint:hover, .whoami:hover { opacity: 0.8; }
+  .optrow:hover, button.rowline:hover, .keeprow:hover { opacity: 0.72; } .tab:hover { color: var(--ink-primary); }
+}
+/* Reduced motion: fewer and gentler, not none. Fades stay, movement goes. */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 1ms !important; animation-delay: 0ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; scroll-behavior: auto !important; }
-  .cl-it { animation: none !important; }
-  .pk-btn:active, .pk-iconbtn:active, .facebtn:active, .pchip:active .pchip-o { transform: none; opacity: 0.8; }
+  .pk-enter, .pk-pop, .swap, .boot-seq > *, .plate-it, .tick, .celebrate.is-playing .cel-meta, .celebrate.is-playing .cel-number, .celebrate.is-playing .cel-line, .celebrate.is-playing .cel-action, .celebrate.is-playing .cel-aura, .celebrate.is-playing .cel-bloom { animation-name: fade-in; }
+  .cl-it { animation: none; }
+  .sheet, .ov.open .sheet { transform: none; opacity: 0; transition: opacity var(--duration-fast) ease; } .ov.open .sheet { opacity: 1; }
+  .under.pushed { transform: none; border-radius: 0; }
+  .toast { transform: none; } .tabbar-on, .seg-thumb, .sw-knob, .card, .bar i { transition-duration: 1ms; }
+  .pk-btn:active, .pk-iconbtn:active, .facebtn:active, .hero-food:active, .hint:active, .whoami:active, .pchip:active .pchip-o, .rest-item:active .orb, .cell:active .orb, .card.holding { transform: none; opacity: 0.8; }
 }
 </style>
 </head>
@@ -646,6 +674,9 @@ const isoWeek = d => { const t = new Date(Date.UTC(d.getFullYear(), d.getMonth()
 const nf = n => Math.round(n).toLocaleString('en-US');
 const hhmm = m => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
 const mmss = sec => Math.floor(sec / 60) + ':' + String(Math.floor(sec % 60)).padStart(2, '0');
+/* Slow motion (Prototype controls) stretches every animation, in CSS and in script, so motion can be checked frame by frame. */
+let SLOW = 1;
+const ms = n => n * SLOW;
 
 function freshState() {
   const wk = isoWeek(new Date());
@@ -679,21 +710,31 @@ const ui = { s: { tab: 'home', stack: [], toast: null }, subs: new Set() };
 function uiSet(p) { ui.s = Object.assign({}, ui.s, typeof p === 'function' ? p(ui.s) : p); ui.subs.forEach(f => f()); }
 const useUI = () => React.useSyncExternalStore(cb => { ui.subs.add(cb); return () => ui.subs.delete(cb); }, () => ui.s);
 function open(type, props) { const id = uid(); uiSet(u => ({ toast: null, stack: u.stack.concat([{ id, type, props: props || {} }]) })); return id; }
-function close(id) {
+function close(id, instant) {
   const st = ui.s.stack, o = id ? st.find(x => x.id === id) : st[st.length - 1];
   if (!o || o.closing) return;
+  if (instant) return uiSet(u => ({ stack: u.stack.filter(x => x.id !== o.id) }));
   uiSet(u => ({ stack: u.stack.map(x => (x.id === o.id ? Object.assign({}, x, { closing: true }) : x)) }));
-  setTimeout(() => uiSet(u => ({ stack: u.stack.filter(x => x.id !== o.id) })), 210);
+  setTimeout(() => uiSet(u => ({ stack: u.stack.filter(x => x.id !== o.id) })), ms(320));
 }
 function closeAll() { ui.s.stack.forEach(o => close(o.id)); }
-function toast(text, action) { const id = uid(); uiSet({ toast: { id, text, action } }); setTimeout(() => { if (ui.s.toast && ui.s.toast.id === id) uiSet({ toast: null }); }, 4400); }
+/* Toast: one call from anywhere. The timer pauses while the tab is hidden, and it leaves faster than it arrives. */
+let toastT = 0, toastLeft = 0, toastAt = 0;
+function toastRun() { clearTimeout(toastT); toastAt = Date.now(); toastT = setTimeout(dismissToast, toastLeft); }
+function toast(text, action) { uiSet({ toast: { id: uid(), text, action } }); toastLeft = ms(action ? 5000 : 3600); toastRun(); }
+function dismissToast() {
+  const t = ui.s.toast; if (!t || t.leaving) return; clearTimeout(toastT);
+  uiSet({ toast: Object.assign({}, t, { leaving: true }) });
+  setTimeout(() => { if (ui.s.toast && ui.s.toast.id === t.id) uiSet({ toast: null }); }, ms(220));
+}
+document.addEventListener('visibilitychange', () => { if (!ui.s.toast || ui.s.toast.leaving) return; if (document.hidden) { clearTimeout(toastT); toastLeft = Math.max(1200, toastLeft - (Date.now() - toastAt)); } else toastRun(); });
 const buzz = ms => { try { navigator.vibrate && navigator.vibrate(ms || 8); } catch (e) {} };
 
 /* Pointer tracking that survives the scaled desktop frame. */
 let FIT = 1;
 function track(e, cb) {
-  const x0 = e.clientX, y0 = e.clientY, id = e.pointerId;
-  let lx = x0, ly = y0, lt = performance.now(), vx = 0, vy = 0;
+  const x0 = e.clientX, y0 = e.clientY, id = e.pointerId, t0 = performance.now();
+  let lx = x0, ly = y0, lt = t0, vx = 0, vy = 0;
   const mv = ev => {
     if (ev.pointerId !== id) return;
     const now = performance.now(), dt = Math.max(1, now - lt);
@@ -704,11 +745,26 @@ function track(e, cb) {
   const up = ev => {
     if (ev.pointerId !== id) return;
     off();
-    cb.end && cb.end((ev.clientX - x0) / FIT, (ev.clientY - y0) / FIT, vx / FIT, vy / FIT, ev.type === 'pointercancel');
+    cb.end && cb.end((ev.clientX - x0) / FIT, (ev.clientY - y0) / FIT, vx / FIT, vy / FIT, ev.type === 'pointercancel', performance.now() - t0);
   };
   const off = () => { window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); };
   window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
   return off;
+}
+
+/* A small spring for things let go mid-drag: it keeps the release velocity and can be grabbed again at any point. */
+function spring(o) {
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) { o.onUpdate(o.to); o.onDone && o.onDone(); return () => {}; }
+  let x = o.from, v = o.v || 0, last = performance.now(), raf = 0;
+  const k = o.k || 240, c = o.c || 26;
+  const step = now => {
+    const dt = Math.min(.032, (now - last) / 1000) / SLOW / 2; last = now;
+    for (let i = 0; i < 2; i++) { v += (-k * (x - o.to) - c * v) * dt; x += v * dt; }
+    if (Math.abs(x - o.to) < .4 && Math.abs(v) < 12) { o.onUpdate(o.to); o.onDone && o.onDone(); return; }
+    o.onUpdate(x); raf = requestAnimationFrame(step);
+  };
+  raf = requestAnimationFrame(step);
+  return () => cancelAnimationFrame(raf);
 }
 
 /* ── Portions: one cook, sized per person from their own targets ── */
@@ -1093,21 +1149,33 @@ const Stepper = ({ value, onChange, min, max, label }) => html`<div class="stepp
   <button type="button" class="pk-iconbtn" aria-label="More" disabled=${value >= max} onClick=${() => onChange(value + 1)}><${Icon} n="plus" /></button>
 </div>`;
 
-/* Sheet: slides up from the bottom edge, leaves with a plain fade. Drag the handle down to close. */
+/* Sheet: a drawer. It slides on the iOS drawer curve, follows the finger, resists past its top edge,
+   and lets go on distance or on velocity. The screen behind scales back with it. */
 function Sheet({ ov, children, full, label, theme, cls }) {
-  const el = useRef(null);
+  const el = useRef(null), dim = useRef(null), stop = useRef(null), [open, setOpen] = useState(false);
+  useEffect(() => { const r = requestAnimationFrame(() => requestAnimationFrame(() => setOpen(true))); return () => { cancelAnimationFrame(r); if (stop.current) stop.current(); }; }, []);
   const grab = e => {
-    const node = el.current; node.style.transition = 'none';
+    const node = el.current, h = node.offsetHeight, under = document.querySelector('.under');
+    if (stop.current) stop.current();
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) {}
+    node.style.transition = 'none'; dim.current.style.transition = 'none'; if (under) under.style.transition = 'none';
+    let y = 0;
+    const paint = () => {
+      node.style.transform = 'translateY(' + y + 'px)';
+      const p = clamp(y / h, 0, 1); dim.current.style.opacity = String(1 - p);
+      if (under) under.style.transform = 'scale(' + (.94 + .06 * p) + ')';
+    };
+    const release = () => { node.style.transition = ''; node.style.transform = ''; dim.current.style.transition = ''; dim.current.style.opacity = ''; if (under) { under.style.transition = ''; under.style.transform = ''; } };
     track(e, {
-      move: (dx, dy) => { node.style.transform = 'translateY(' + Math.max(0, dy) + 'px)'; },
-      end: (dx, dy, vx, vy) => {
-        if (dy > 120 || vy > .7) close(ov.id);
-        else { node.style.transition = 'transform var(--duration-base) var(--ease-out)'; node.style.transform = 'translateY(0)'; }
+      move: (dx, dy) => { y = dy > 0 ? dy : -Math.pow(-dy, .72); paint(); },
+      end: (dx, dy, vx, vy, cancelled, took) => {
+        if (!cancelled && dy > 0 && (dy > h * .28 || dy / Math.max(1, took) > .4)) { node.style.transition = ''; node.style.transform = 'translateY(100%)'; dim.current.style.transition = ''; dim.current.style.opacity = ''; if (under) { under.style.transition = ''; under.style.transform = ''; } close(ov.id); return; }
+        stop.current = spring({ from: y, to: 0, v: vy * 1000, k: 320, c: 34, onUpdate: v => { y = v; paint(); }, onDone: () => { stop.current = null; release(); } });
       },
     });
   };
-  return html`<div class=${cx('ov', ov.closing && 'out')} data-theme=${theme}>
-    <div class="scrim" onClick=${() => close(ov.id)}></div>
+  return html`<div class=${cx('ov', open && !ov.closing && 'open', ov.closing && 'out')} data-theme=${theme}>
+    <div ref=${dim} class="scrim" onClick=${() => close(ov.id)}></div>
     <div ref=${el} class=${cx('sheet', full && 'sheet--full', cls)} role="dialog" aria-modal="true" aria-label=${label}>
       <div class="sheet-grab" onPointerDown=${grab}><i></i></div>
       ${children}
@@ -1206,7 +1274,7 @@ function Celebrate({ ov }) {
   const [n, setN] = useState(REDUCED ? number : 0);
   useEffect(() => {
     if (REDUCED) return; let raf = 0, t0 = null;
-    const tick = t => { if (t0 === null) t0 = t; const p = clamp((t - t0 - 600) / 900, 0, 1); setN(Math.round(number * (1 - Math.pow(1 - p, 3)))); if (p < 1) raf = requestAnimationFrame(tick); };
+    const tick = t => { if (t0 === null) t0 = t; const p = clamp((t - t0 - ms(600)) / ms(900), 0, 1); setN(Math.round(number * (1 - Math.pow(1 - p, 3)))); if (p < 1) raf = requestAnimationFrame(tick); };
     raf = requestAnimationFrame(tick); return () => cancelAnimationFrame(raf);
   }, []);
   return html`<div class=${cx('full celebrate is-playing', ov.closing && 'out')} data-theme=${theme} role="dialog" aria-modal="true" aria-label=${number + ' ' + line}>
@@ -1238,10 +1306,21 @@ function WheelSheet({ ov }) {
   <//>`;
 }
 function Toast() {
-  const u = useUI(), t = u.toast; if (!t) return null;
-  return html`<div class="toast pk-enter" key=${t.id} role="status">
+  const u = useUI(), t = u.toast, el = useRef(null), [shown, setShown] = useState(false), tid = t ? t.id : null;
+  useEffect(() => { setShown(false); if (!tid) return; const r = requestAnimationFrame(() => requestAnimationFrame(() => setShown(true))); return () => cancelAnimationFrame(r); }, [tid]);
+  if (!t) return null;
+  const swipe = e => {
+    if (e.target.closest('button')) return;
+    const node = el.current; node.style.transition = 'none';
+    try { node.setPointerCapture(e.pointerId); } catch (err) {}
+    track(e, {
+      move: (dx, dy) => { node.style.transform = 'translateY(' + (dy > 0 ? dy : -Math.pow(-dy, .6)) + 'px)'; },
+      end: (dx, dy, vx, vy, cancelled, took) => { node.style.transition = ''; node.style.transform = ''; if (!cancelled && dy > 0 && (dy > 28 || dy / Math.max(1, took) > .11)) dismissToast(); },
+    });
+  };
+  return html`<div ref=${el} class=${cx('toast', shown && !t.leaving && 'in')} key=${t.id} role="status" onPointerDown=${swipe}>
     <span class="v2-label grow">${t.text}</span>
-    ${t.action && html`<button type="button" class="v2-label toast-act" onClick=${() => { t.action.fn(); uiSet({ toast: null }); }}>${t.action.label}</button>`}
+    ${t.action && html`<button type="button" class="v2-label toast-act" onClick=${() => { t.action.fn(); dismissToast(); }}>${t.action.label}</button>`}
   </div>`;
 }
 
@@ -1335,13 +1414,16 @@ function Onboarding() {
 
 /* ───────────── Shell: tab bar ───────────── */
 const TABS = [['home', 'Home', 'home'], ['plan', 'Plan', 'plan'], ['groceries', 'Groceries', 'bag'], ['profile', 'Profile', 'user']];
+/* Two copies of the tabs: the plain one, and an inverted one seen through a clip that slides to the active tab.
+   Icon and label change colour exactly at the edge of the pill, never before or after it. */
 function TabBar() {
   const u = useUI(), i = TABS.findIndex(t => t[0] === u.tab);
   return html`<nav class="tabbar" aria-label="Main" style=${{ '--i': i }}>
-    <i class="tab-ind"></i>
     ${TABS.map(t => html`<button type="button" key=${t[0]} class="tab" aria-current=${u.tab === t[0] ? 'page' : null} onClick=${() => uiSet({ tab: t[0] })}><${Icon} n=${t[2]} /><span class="v2-micro">${t[1]}</span></button>`)}
+    <div class="tabbar-on" aria-hidden="true">${TABS.map(t => html`<span key=${t[0]} class="tab"><${Icon} n=${t[2]} /><span class="v2-micro">${t[1]}</span></span>`)}</div>
   </nav>`;
 }
+let BOOT = true;
 
 /* ───────────── Home: leads with the next meal ───────────── */
 function PlanNudge({ s }) {
@@ -1351,7 +1433,7 @@ function PlanNudge({ s }) {
   if (resume) { micro = 'Week ' + s.weekN + ' · in progress'; line = 'Pick up where you left off.'; cta = 'Continue planning'; }
   else if (s.nudge.skipped) { micro = 'Week ' + s.weekN + ' · skipped'; line = 'Skipped. New week, clean slate.'; cta = 'Plan anyway'; }
   else if (snoozed) { const d = new Date(s.nudge.snooze); micro = 'Friday'; line = 'Next nudge at ' + hhmm(d.getHours() * 60 + d.getMinutes()) + '.'; cta = 'Plan now'; }
-  return html`<section class="col g20 nudge pk-enter">
+  return html`<section class="col g20 nudge">
     <${Cluster} />
     <p class="v2-micro ink2">${micro}</p>
     <h1 class="v2-display">${line}</h1>
@@ -1377,6 +1459,9 @@ function MacroBar({ s, who }) {
 }
 function Home() {
   const s = useS(), w = s.week, me = s.me;
+  /* The entrance plays once, when the app opens. Coming back to this tab is frequent, so it stays still. */
+  const boot = useRef(BOOT), [ready, setReady] = useState(false);
+  useEffect(() => { BOOT = false; setReady(true); }, []);
   const active = w && w.status === 'active';
   const top = html`<div class="topbar">
     <button type="button" class="whoami" aria-label=${'Holding the phone: ' + PEOPLE[me] + '. Switch'} onClick=${() => { mut(d => { d.me = other(d.me); }); toast(PEOPLE[other(me)] + ' is holding the phone now.'); }}>
@@ -1384,7 +1469,7 @@ function Home() {
     ${active && html`<div class="days sm grow" role="tablist" aria-label="Day of the week">${[0, 1, 2, 3, 4, 5, 6].map(d => html`<button type="button" key=${d} role="tab" aria-selected=${d === w.day} class=${cx('day v2-micro', d === w.day && 'on', dayOnPlan(w, d) && 'ok')} aria-label=${dayName(w, d, 1)} onClick=${() => mut(x => { x.week.day = d; })}>${dayName(w, d)[0]}</button>`)}</div>`}
     <${IconBtn} n="sliders" label="Prototype controls" onClick=${() => open('demo')} />
   </div>`;
-  if (!active) return html`<div class="screen"><div class="scroll pad body-tabs">${top}<${PlanNudge} s=${s} /></div></div>`;
+  if (!active) return html`<div class="screen"><div class=${cx('scroll pad body-tabs', boot.current && 'boot-seq')}>${top}<${PlanNudge} s=${s} /></div></div>`;
 
   const key = upcomingKey(w), en = key ? w.slots[key] : null, r = entryRecipe(en, s);
   const dow = (w.startDow + w.day) % 7, ro = w.rough[w.day], rateKey = pendingRating(s);
@@ -1400,7 +1485,7 @@ function Home() {
   let hero;
   if (en) {
     const pr = r && entryPortion(en, 'ruba', s, key), po = r && entryPortion(en, 'omar', s, key);
-    hero = html`<section class="hero col g16 pk-enter" key=${en.k + (en.quick ? 'q' : '')}>
+    hero = html`<section class=${cx('hero col g16', ready && 'swap')} key=${en.k + (en.quick ? 'q' : '')}>
       <div class="hero-top">
         <p class="v2-micro ink2">${MEAL[key[1]]}${r ? ' · ' + entryTime(en, s) + ' min' : ''}${en.quick ? ' · quicker version' : ''}</p>
         <button type="button" class="hero-food" aria-label=${'Open ' + entryName(en, s)} onClick=${() => (r ? open('recipe', { k: key }) : open('slot', { k: key }))}>
@@ -1419,14 +1504,14 @@ function Home() {
     </section>`;
   } else {
     const last = w.day >= 6, tk = !last && MAINS.map(m => (w.day + 1) + m).find(k => w.slots[k]), ten = tk ? w.slots[tk] : null, tr = entryRecipe(ten, s);
-    hero = html`<section class="hero col g16 pk-enter" key=${'done' + w.day}>
+    hero = html`<section class=${cx('hero col g16', ready && 'swap')} key=${'done' + w.day}>
       <div class="hero-top"><p class="v2-micro ink2">${dayName(w, w.day, 1)} · done</p>
         <span class="hero-food">${tr ? html`<${Orb} r=${tr} s=${156} glow />` : html`<${Aura} s=${140} />`}</span></div>
       <h1 class="v2-display hero-name">${last ? "That's the week." : ten ? 'Tomorrow, ' + entryName(ten, s).toLowerCase() + '.' : 'Nothing planned tomorrow.'}</h1>
       <${Btn} block onClick=${() => (last ? openClose() : mut(d => { d.week.day++; }))}>${last ? 'Close the week' : 'Go to ' + dayName(w, w.day + 1, 1)}<//>
     </section>`;
   }
-  return html`<div class="screen"><div class="scroll pad body-tabs col g20">
+  return html`<div class="screen"><div class=${cx('scroll pad body-tabs col g20', boot.current && 'boot-seq')}>
     ${top}
     ${hint && html`<button type="button" class="hint" onClick=${hint[1]}><i class="mint"></i><span class="v2-body grow">${hint[0]}</span><span class="ink3"><${Icon} n="right" s=${16} /></span></button>`}
     ${hero}
@@ -1451,8 +1536,13 @@ const Tags = ({ r, s }) => html`<div class="row g8 wrap">
   ${s.house.rhea && r.rhea && html`<span class="tag v2-label"><${Dot} p="rhea" />Rhea ${r.rhea[0]}</span>`}
   ${s.house.uc && r.uc && html`<span class="tag v2-label">UC ${r.uc[0] === 'swaps' ? 'with swaps' : 'friendly'}</span>`}
 </div>`;
-function WeekBoard({ s, rhea }) {
+function WeekBoard({ s, rhea, stagger }) {
   const w = s.week, ref = useRef(null), dragging = useRef(false), gest = useRef(false);
+  /* Cells only animate when they are new: row by row when the week first assembles, one at a time when a meal moves in.
+     Opening the tab again shows the board as it is. */
+  const born = useRef({ first: true, known: new Set(), anim: new Set(), rhea });
+  if (born.current.rhea !== rhea) born.current = { first: true, known: new Set(), anim: new Set(), rhea };
+  useEffect(() => { born.current.first = false; });
   useEffect(() => {
     const el = ref.current, stop = e => { if (dragging.current) e.preventDefault(); };
     el.addEventListener('touchmove', stop, { passive: false });
@@ -1504,6 +1594,7 @@ function WeekBoard({ s, rhea }) {
     });
   };
   const plus = html`<span class="orb-empty"><${Icon} n="plus" s=${16} /></span>`;
+  const isNew = (key, en) => { const b = born.current, id = key + (en ? en.k : ''); if (!b.known.has(id)) { b.known.add(id); if (!b.first || stagger) b.anim.add(id); } return b.anim.has(id); };
   const cell = (d, m) => {
     const key = d + m, en = w.slots[key], r = entryRecipe(en, s);
     let th, cap, empty = !en;
@@ -1518,7 +1609,7 @@ function WeekBoard({ s, rhea }) {
     } else { th = plus; cap = ''; }
     return html`<div key=${key} data-slot=${key} role="button" tabIndex="0" aria-label=${dayName(w, d, 1) + ' ' + MEAL[m] + ': ' + (cap || 'empty')}
       class=${cx('cell', empty && 'empty')} onPointerDown=${e => down(e, key)} onClick=${() => { if (gest.current) gest.current = false; else tap(key); }} onKeyDown=${e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tap(key); } }}>
-      <span class="cell-th pk-enter" key=${(en ? en.k : 'e') + (rhea ? 'r' : '')}>${th}</span>
+      <span class=${cx('cell-th', isNew(key, en) && 'pk-enter')} style=${stagger && born.current.first ? { animationDelay: 'calc(' + (d * 45 + SLOTS.indexOf(m) * 18) + 'ms * var(--slow))' } : null} key=${(en ? en.k : 'e') + (rhea ? 'r' : '')}>${th}</span>
       <span class="v2-caption cell-n">${cap}</span>
     </div>`;
   };
@@ -1554,41 +1645,58 @@ function CardFace({ r, s }) {
 }
 function StepSwipe({ s, flush }) {
   const p = s.planning, m = MAINS[p.sess], deck = p.decks[m], rid = deck[p.idx], done = p.idx >= deck.length;
-  const topRef = useRef(null), busy = useRef(false), tapT = useRef(0), gest = useRef(false);
-  useEffect(() => { if (!done) return; const t = setTimeout(() => { flush(); nextSession(); }, 800); return () => clearTimeout(t); }, [done, p.sess]);
-  const stamp = dx => { const el = topRef.current; if (!el) return; const y = el.querySelector('.stamp-yes'), n = el.querySelector('.stamp-no'); if (y) y.style.opacity = clamp(dx / 90, 0, 1); if (n) n.style.opacity = clamp(-dx / 90, 0, 1); };
-  const settle = () => { const el = topRef.current; if (!el) return; el.style.transition = 'transform var(--duration-base) var(--ease-spring)'; el.style.transform = ''; stamp(0); };
+  const topRef = useRef(null), busy = useRef(false), tapT = useRef(0), gest = useRef(false), pos = useRef({ x: 0, y: 0 }), stops = useRef([]);
+  useEffect(() => { if (!done) return; const t = setTimeout(() => { flush(); nextSession(); }, ms(800)); return () => clearTimeout(t); }, [done, p.sess]);
+  const halt = () => { stops.current.forEach(f => f()); stops.current = []; };
+  useEffect(() => { halt(); pos.current = { x: 0, y: 0 }; }, [rid]);
+  const paint = () => {
+    const el = topRef.current; if (!el) return; const { x, y } = pos.current;
+    el.style.transform = x || y ? 'translate(' + x + 'px,' + y + 'px) rotate(' + x / 20 + 'deg)' : '';
+    const a = el.querySelector('.stamp-yes'), b = el.querySelector('.stamp-no'); if (a) a.style.opacity = clamp(x / 90, 0, 1); if (b) b.style.opacity = clamp(-x / 90, 0, 1);
+  };
+  /* Let go short of the edge and the card springs home, carrying the speed it was released with. It can be caught again mid-way. */
+  const settle = (vx, vy) => {
+    halt(); const el = topRef.current; if (!el) return; el.style.transition = 'none';
+    let n = 2; const fin = () => { if (--n === 0) { stops.current = []; el.style.transition = ''; paint(); } };
+    stops.current = [
+      spring({ from: pos.current.x, to: 0, v: (vx || 0) * 1000, onUpdate: v => { pos.current.x = v; paint(); }, onDone: fin }),
+      spring({ from: pos.current.y, to: 0, v: (vy || 0) * 1000, onUpdate: v => { pos.current.y = v; paint(); }, onDone: fin }),
+    ];
+  };
   const commit = (yes, qty, choice) => {
-    if (busy.current || done) return; busy.current = true;
+    if (busy.current || done) return; busy.current = true; halt();
     if (!s.hints.deck) mut(d => { d.hints.deck = true; });
-    const el = topRef.current; if (yes) { stamp(120); buzz(10); }
-    el.style.transition = 'transform var(--duration-fast) var(--ease-in), opacity var(--duration-fast) var(--ease-in)';
-    el.style.transform = 'translate(' + (yes ? 460 : -460) + 'px,0) rotate(' + (yes ? 16 : -16) + 'deg)'; el.style.opacity = '0';
-    setTimeout(() => { swipe(rid, yes, qty, choice); busy.current = false; }, 200);
+    const el = topRef.current, st = el.querySelector(yes ? '.stamp-yes' : '.stamp-no'); if (st) st.style.opacity = 1; if (yes) buzz(10);
+    /* Thrown, not eased in: it leaves at speed and slows as it goes. */
+    el.style.transition = 'transform var(--duration-exit) var(--ease-out), opacity var(--duration-exit) var(--ease-out)';
+    el.style.transform = 'translate(' + (yes ? 480 : -480) + 'px,' + pos.current.y * 1.4 + 'px) rotate(' + (yes ? 18 : -18) + 'deg)'; el.style.opacity = '0';
+    setTimeout(() => { swipe(rid, yes, qty, choice); busy.current = false; }, ms(180));
   };
   const decide = (yes, qty) => {
     const r = RECIPES[rid];
-    if (yes && (r.alts || r.bread)) { settle(); open('choice', { rid, onPick: c => commit(true, qty, c) }); return; }
+    if (yes && (r.alts || r.bread)) { settle(0, 0); open('choice', { rid, onPick: c => commit(true, qty, c) }); return; }
     commit(yes, qty, null);
   };
   const never = () => {
     const r = RECIPES[rid], el = topRef.current; busy.current = true; buzz(20);
-    el.style.transition = 'transform var(--duration-fast) var(--ease-in), opacity var(--duration-fast) var(--ease-in)'; el.style.transform = 'scale(.9)'; el.style.opacity = '0';
-    setTimeout(() => { mut(d => { d.hist.never.push(rid); }); swipe(rid, false); busy.current = false; toast("Won't show " + r.n.toLowerCase() + ' again.', { label: 'Undo', fn: () => mut(d => { d.hist.never = d.hist.never.filter(x => x !== rid); }) }); }, 200);
+    el.style.transition = 'transform var(--duration-fast) var(--ease-out), opacity var(--duration-fast) var(--ease-out)'; el.style.transform = 'scale(.94)'; el.style.opacity = '0';
+    setTimeout(() => { mut(d => { d.hist.never.push(rid); }); swipe(rid, false); busy.current = false; toast("Won't show " + r.n.toLowerCase() + ' again.', { label: 'Undo', fn: () => mut(d => { d.hist.never = d.hist.never.filter(x => x !== rid); }) }); }, ms(200));
   };
   const down = e => {
     if (busy.current || e.button > 0) return;
-    const el = topRef.current; let moved = false, long = false;
-    gest.current = false;
-    const lp = setTimeout(() => { if (!moved) { long = true; gest.current = true; never(); } }, 620);
-    el.style.transition = 'none';
+    const el = topRef.current, base = { x: pos.current.x, y: pos.current.y }; let moved = false, held = false, fired = false, t1 = 0, t2 = 0;
+    halt(); gest.current = false; el.style.transition = 'none';
+    try { el.setPointerCapture(e.pointerId); } catch (err) {}
+    const unhold = () => { clearTimeout(t1); clearTimeout(t2); if (held) { held = false; el.classList.remove('holding'); } };
+    /* Hold to never see it again. The fill shows how long is left, and lifting early takes it back. */
+    t1 = setTimeout(() => { if (moved) return; held = true; gest.current = true; el.classList.add('holding'); buzz(6); t2 = setTimeout(() => { fired = true; never(); }, ms(900)); }, ms(220));
     track(e, {
-      move: (dx, dy) => { if (!moved && Math.hypot(dx, dy) > 8) { moved = true; gest.current = true; clearTimeout(lp); } if (moved && !long) { el.style.transform = 'translate(' + dx + 'px,' + dy * .25 + 'px) rotate(' + dx / 20 + 'deg)'; stamp(dx); } },
-      end: (dx, dy, vx, vy, cancelled) => {
-        clearTimeout(lp); if (long) return;
-        if (cancelled) return settle();
-        if (!moved) return;
-        if (dx > 96 || vx > .55) decide(true, 1); else if (dx < -96 || vx < -.55) decide(false, 1); else settle();
+      move: (dx, dy) => { if (!moved && Math.hypot(dx, dy) > 8) { moved = true; gest.current = true; unhold(); } if (moved && !fired) { pos.current.x = base.x + dx; pos.current.y = base.y + dy * .25; paint(); } },
+      end: (dx, dy, vx, vy, cancelled, took) => {
+        unhold(); if (fired) return;
+        if (cancelled || !moved) { if (pos.current.x || pos.current.y) settle(0, 0); else el.style.transition = ''; return; }
+        const x = pos.current.x, flick = Math.abs(dx) / Math.max(1, took) > .5 && Math.abs(x) > 30;
+        if (x > 96 || (flick && x > 0)) decide(true, 1); else if (x < -96 || (flick && x < 0)) decide(false, 1); else settle(vx, vy * .25);
       },
     });
   };
@@ -1612,7 +1720,8 @@ function StepSwipe({ s, flush }) {
     <div class="deck">
       ${done && html`<div class="deck-end col g8 pk-enter"><p class="v2-micro ink2">${MEAL[m]} · done</p><p class="v2-display">${p.sess < 2 ? MEAL[MAINS[p.sess + 1]] + ' next.' : 'Putting the week together.'}</p></div>`}
       ${!done && [2, 1, 0].map(o => { const id = deck[p.idx + o]; if (!id) return null; const r = RECIPES[id];
-        return html`<div key=${id} ref=${o === 0 ? topRef : null} class=${cx('card', 'c' + o, hueOf(r))} onPointerDown=${o === 0 ? down : null} onClick=${o === 0 ? click : null}><${CardFace} r=${r} s=${s} /></div>`; })}
+        return html`<div key=${id} ref=${o === 0 ? topRef : null} class=${cx('card', 'c' + o, hueOf(r))} onPointerDown=${o === 0 ? down : null} onClick=${o === 0 ? click : null}><${CardFace} r=${r} s=${s} />
+          ${o === 0 && html`<span class="hold" aria-hidden="true"><span class="v2-display">Never show again</span><span class="v2-caption">Keep holding. Lift to cancel.</span></span>`}</div>`; })}
     </div>
     <div class="pad col g12 deck-actions">
       <div class="row g8">
@@ -1638,7 +1747,7 @@ function PlanFlow({ ov }) {
     const ids = Object.keys(p.keep);
     body = html`<div class="flow-body pad col g24 scroll">
       <div class="col g8"><p class="v2-micro ink2">From last week · rated 4 or more</p><h1 class="v2-display">Keep these?</h1></div>
-      <div class="col">${ids.map(id => { const r = RECIPES[id]; return html`<button type="button" key=${id} class=${cx('keeprow', !p.keep[id] && 'off')} aria-pressed=${p.keep[id]} onClick=${() => mut(d => { d.planning.keep[id] = !d.planning.keep[id]; })}>
+      <div class="col">${ids.map((id, n) => { const r = RECIPES[id]; return html`<button type="button" key=${id} class=${cx('keeprow pk-enter', !p.keep[id] && 'off')} style=${{ animationDelay: 'calc(' + n * 60 + 'ms * var(--slow))' }} aria-pressed=${p.keep[id]} onClick=${() => mut(d => { d.planning.keep[id] = !d.planning.keep[id]; })}>
         <${Orb} r=${r} s=${56} /><span class="grow col g4"><span class="v2-micro ink3">${MEAL[r.m]} · ${r.t} min</span><span class="v2-title">${r.n}</span></span>
         <i class=${cx('tickbox', p.keep[id] && 'on')}><${Icon} n="check" s=${14} /></i></button>`; })}</div>
       <p class="v2-caption ink2">Untick any to swap it out. New cards fill the gaps.</p>
@@ -1671,7 +1780,7 @@ function StepProteins({ s, flush }) {
       </svg>
       <span class="orbit-core"><${Dots} v=${sel.length + '/3'} h=${24} /></span>
       ${PROTEINS.map((pr, i) => { const on = sel.includes(pr.id);
-        return html`<button type="button" key=${pr.id} class=${cx('pchip', on && 'on', !on && sel.length >= 3 && 'dim')} style=${{ left: pos[i][0] + 'px', top: pos[i][1] + 'px' }} aria-pressed=${on} onClick=${() => tog(pr.id)}>
+        return html`<button type="button" key=${pr.id} class=${cx('pchip pk-pop', on && 'on', !on && sel.length >= 3 && 'dim')} style=${{ left: pos[i][0] + 'px', top: pos[i][1] + 'px', animationDelay: 'calc(' + (60 + i * 40) + 'ms * var(--slow))' }} aria-pressed=${on} onClick=${() => tog(pr.id)}>
           <span class="pchip-o"><${Orb} e=${pr.e} hue=${'h-' + pr.id} s=${66} done=${on} />${least.includes(pr.id) && !on && html`<i class="mint pchip-mint"></i>`}</span>
           <span class="v2-label">${pr.n}</span></button>`; })}
     </div>
@@ -1688,7 +1797,7 @@ function StepReview({ s }) {
         : html`<p class="v2-micro ink2">Week ${w.n} · ${mealCount(w)} meals</p><h1 class="v2-title">Week sorted in ${tm}.</h1>
           <div class="row"><${Btn} kind="secondary" size="sm" onClick=${() => setMoving(true)}>Move things around<//></div>`}
     </div>
-    <${WeekBoard} s=${s} />
+    <${WeekBoard} s=${s} stagger />
   </div>
   <div class="foot pad"><${Btn} block onClick=${() => mut(d => { d.planning.step = 'shop'; })}>Looks good<//></div>`;
 }
@@ -2292,6 +2401,7 @@ function DemoSheet({ ov }) {
     <div class="pad col g8"><p class="v2-micro ink3">Prototype controls</p><h2 class="v2-title">Move through the week</h2>
       <p class="v2-body ink2">Days move by hand in this prototype. Everything else is real and saved on this phone.</p></div>
     <div class="pad col sheet-pad mt8">
+      <${Row} label="Slow motion" sub="Plays every animation four times slower, to inspect it" right=${html`<${Toggle} id="demo-slow" on=${!!s.hints.slow} label="Slow motion" onChange=${v => mut(d => { d.hints.slow = v; })} />`} />
       ${active && w.day < 6 && html`<${OptRow} title=${'Go to ' + dayName(w, w.day + 1, 1)} sub="Moves today forward by one day" onClick=${() => go(() => { mut(d => { d.week.day++; }); uiSet({ tab: 'home' }); })} />`}
       ${active && html`<${OptRow} title="Simulate a rough night" sub=${'Reads as 4 h 40 min of sleep for ' + PEOPLE[me] + '. Turns on sleep-aware days'} onClick=${() => go(() => { mut(d => { d.profiles[me].sleepOn = true; }); flagRough(me, 4.67); uiSet({ tab: 'home' }); open('rough'); })} />`}
       ${active && html`<${OptRow} title="Mark the whole week as eaten" sub="For a quick look at a good weekly close" onClick=${() => go(() => { mut(d => { Object.values(d.week.slots).forEach(en => { if (en) en.done = true; }); d.week.day = 6; d.week.stocked = true; }); uiSet({ tab: 'home' }); })} />`}
@@ -2306,17 +2416,25 @@ function DemoSheet({ ov }) {
 const OVERLAYS = { plan: PlanFlow, recipe: RecipeSheet, choice: ChoiceSheet, slot: SlotSheet, rhea: RheaSheet, cook: CookMode, rate: RateSheet, build: BuildSheet,
   celebrate: Celebrate, confirm: ConfirmSheet, wheel: WheelSheet, arc: ArcSheet, missing: MissingSheet, shoptime: ShopSheet, list: ListSheet,
   snap: SnapFlow, rescue: RescueSheet, rough: RoughSheet, demo: DemoSheet };
+const FULL = { plan: 1, cook: 1, celebrate: 1, snap: 1 };
 const TABVIEW = { home: Home, plan: PlanTab, groceries: GroceriesTab, profile: ProfileTab };
 function App() {
-  const s = useS(), u = useUI();
-  useEffect(() => { const esc = e => { if (e.key === 'Escape') close(); }; window.addEventListener('keydown', esc); return () => window.removeEventListener('keydown', esc); }, []);
+  const s = useS(), u = useUI(), slow = s.hints.slow ? 4 : 1;
+  useLayoutEffect(() => { SLOW = slow; document.documentElement.style.setProperty('--slow', String(slow)); }, [slow]);
+  /* A key press should not wait on an animation: Escape closes at once. */
+  useEffect(() => { const esc = e => { if (e.key === 'Escape') close(null, true); }; window.addEventListener('keydown', esc); return () => window.removeEventListener('keydown', esc); }, []);
   if (!s.onboarded) return html`<${React.Fragment}><${Onboarding} /><${Toast} /><//>`;
-  const Tab = TABVIEW[u.tab] || Home;
+  const Tab = TABVIEW[u.tab] || Home, layer = full => u.stack.filter(o => !!FULL[o.type] === full).map(o => { const C = OVERLAYS[o.type]; return C ? html`<${C} key=${o.id} ov=${o} />` : null; });
+  const pushed = u.stack.some(o => !FULL[o.type] && !o.closing);
   return html`<${React.Fragment}>
-    <div class="tabview pk-enter" key=${u.tab}><${Tab} /></div>
-    <i class="dockbg"></i>
-    <${TabBar} />
-    ${u.stack.map(o => { const C = OVERLAYS[o.type]; return C ? html`<${C} key=${o.id} ov=${o} />` : null; })}
+    <i class="backdrop"></i>
+    <div class=${cx('under', pushed && 'pushed')}>
+      <div class="tabview" key=${u.tab}><${Tab} /></div>
+      <i class="dockbg"></i>
+      <${TabBar} />
+      ${layer(true)}
+    </div>
+    ${layer(false)}
     <${Toast} />
   <//>`;
 }
