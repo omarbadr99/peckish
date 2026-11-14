@@ -7,33 +7,38 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#ffffff">
 <title>Peckish Prototype</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&amp;family=Geist+Mono:wght@400&amp;display=swap">
 <style>
 :root { padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px); }
 [hidden] { display: none !important; }
 </style>
 <style>
-/* Peckish prototype. Layout: one phone-sized stage; calm flat surfaces, food as the object, Pip's aura as the only gradient.
-   Tokens are copied from the Peckish design system (tokens.json, synced from Figma). Candidates not in the system yet are marked. */
+/* Peckish prototype. One phone-sized stage: white ground, beige surfaces, near-black ink, one muted green accent.
+   Colour lives in the food: every meal sits on a soft orb tinted by its protein. Key numbers are drawn in dot-matrix. */
 :root {
-  --surface-bg: #ffffff; --surface-card: #f4f1ec; --surface-inset: #ffffff; --line-hair: #eae6df;
-  --ink-primary: #121212; --ink-secondary: #6b6760; --ink-tertiary: #a29d95; --ink-inverse: #ffffff;
-  --person-omar: #4f7dff; --person-ruba: #ef5d95; --person-rhea: #ff9b61; --pip-mint: #7ee8c4;
-  --aura-pip-base: #a8efd3; --aura-pip-1: #8acaff; --aura-pip-2: #4fdaae; --aura-pip-3: #b49cff; --aura-pip-4: #edff96;
-  --aura-chrome-base: #3a3d42; --aura-chrome-1: #c9ced6; --aura-chrome-2: #15171a; --aura-chrome-3: #5a6068; --aura-chrome-4: #8c9299;
-  --scrim: rgba(18, 18, 18, 0.32); /* candidate: the dim behind a sheet */
-  --font-sans: Geist, system-ui, -apple-system, "Segoe UI", sans-serif; --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --surface-bg: #ffffff; --surface-card: #f3efe8; --surface-inset: #ffffff; --line-hair: #e6e1d8;
+  --ink-primary: #111110; --ink-secondary: #65615a; --ink-tertiary: #a19c93; --ink-inverse: #ffffff;
+  --accent: #86c59a; --accent-ink: #10301c;
+  --person-omar: #4f7dff; --person-ruba: #ef5d95; --person-rhea: #ff9b61;
+  --glow-base: #ffc7a6; --glow-1: #ffe38f; --glow-2: #ff8fc0; --glow-3: #b9a5ff; --glow-4: #a8e6b8;
+  --chrome-base: #3a3d42; --chrome-1: #c9ced6; --chrome-2: #15171a; --chrome-3: #5a6068; --chrome-4: #8c9299;
+  --scrim: rgba(17, 17, 16, 0.34);
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
   --space-4: 4px; --space-8: 8px; --space-12: 12px; --space-16: 16px; --space-20: 20px; --space-24: 24px; --space-32: 32px; --space-48: 48px;
-  --radius-cell: 12px; --radius-photo: 16px; --radius-card: 24px; --radius-sheet: 36px; --radius-screen: 44px; --radius-pill: 999px;
-  --shadow-float: 0 10px 30px rgba(18, 18, 18, 0.08);
+  --radius-cell: 12px; --radius-tile: 20px; --radius-card: 28px; --radius-sheet: 32px; --radius-screen: 44px; --radius-pill: 999px;
+  --shadow-float: 0 10px 30px rgba(17, 17, 16, 0.1);
   --control-sm: 36px; --control-md: 40px; --control-lg: 56px;
-  --duration-tap: 120ms; --duration-fast: 200ms; --duration-base: 320ms; --duration-slow: 560ms; --duration-bloom: 900ms; --duration-drift: 8000ms;
+  --duration-tap: 120ms; --duration-fast: 200ms; --duration-base: 320ms; --duration-slow: 560ms; --duration-bloom: 900ms;
   --ease-standard: cubic-bezier(0.2, 0, 0, 1); --ease-out: cubic-bezier(0.16, 1, 0.3, 1); --ease-in: cubic-bezier(0.4, 0, 1, 1); --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
   --gl: max(var(--space-20), env(safe-area-inset-left, 0px)); --gr: max(var(--space-20), env(safe-area-inset-right, 0px));
   --fit: 1; color-scheme: light;
 }
-[data-theme="beige"] { --surface-bg: #f2efe9; --surface-card: #ffffff; --surface-inset: #f4f1ec; --line-hair: #e3ded5; }
-[data-theme="night"] { --surface-bg: #000000; --surface-card: #161616; --surface-inset: #232323; --line-hair: #2a2a2a; --ink-primary: #ffffff; --ink-secondary: #a8a49c; --ink-tertiary: #8f8a82; --ink-inverse: #121212; color-scheme: dark; }
+[data-theme="beige"] { --surface-bg: #f3efe8; --surface-card: #ffffff; --surface-inset: #f3efe8; --line-hair: #e0dacf; }
+[data-theme="night"] { --surface-bg: #000000; --surface-card: #171717; --surface-inset: #242424; --line-hair: #2b2b2b; --ink-primary: #ffffff; --ink-secondary: #aaa69e; --ink-tertiary: #8f8a82; --ink-inverse: #111110; color-scheme: dark; }
+/* Protein colours for the food orbs and swipe cards */
+.h-chicken { --o1: #ffe7c4; --o2: #ffb96f; } .h-beef { --o1: #ffd8cd; --o2: #ff9080; } .h-fish { --o1: #d8eaff; --o2: #86b7ff; } .h-shrimp { --o1: #ffdbe5; --o2: #ffa2ba; }
+.h-eggs { --o1: #fff4c7; --o2: #ffd564; } .h-dairy { --o1: #eee6ff; --o2: #c1adff; } .h-plant { --o1: #e2f7c9; --o2: #a2db92; } .h-rhea { --o1: #ffe7d8; --o2: #ffb98f; }
+.h-none { --o1: var(--surface-inset); --o2: var(--surface-card); }
 
 *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body { height: 100%; }
@@ -53,25 +58,25 @@ i { font-style: normal; }
   #phone { --st: 14px; --sb: 8px; position: absolute; left: 50%; top: 50%; width: 390px; height: 844px; margin: -422px 0 0 -195px; border: 1px solid var(--line-hair); border-radius: var(--radius-screen); transform: scale(var(--fit)); }
 }
 
-/* Type styles */
-.v2-display { font: 300 40px/1.1 var(--font-sans); letter-spacing: -0.03em; }
-.v2-title { font: 400 22px/1.25 var(--font-sans); letter-spacing: -0.02em; }
-.v2-headline { font: 500 17px/1.3 var(--font-sans); letter-spacing: -0.01em; }
+/* Type: system font, heavy headlines, mono labels */
+.v2-display { font: 700 34px/1.04 var(--font-sans); letter-spacing: -0.035em; }
+.v2-title { font: 600 22px/1.2 var(--font-sans); letter-spacing: -0.025em; }
+.v2-headline { font: 600 17px/1.3 var(--font-sans); letter-spacing: -0.01em; }
 .v2-body { font: 400 15px/1.45 var(--font-sans); }
-.v2-button { font: 500 16px/1.2 var(--font-sans); }
-.v2-label { font: 500 13px/1.3 var(--font-sans); }
+.v2-button { font: 600 16px/1.2 var(--font-sans); }
+.v2-label { font: 600 13px/1.3 var(--font-sans); }
 .v2-caption { font: 400 12px/1.35 var(--font-sans); }
-.v2-micro { font: 400 11px/1.3 var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; }
-.v2-number-xl { font: 300 104px/1 var(--font-sans); letter-spacing: -0.05em; }
-.v2-number-l { font: 300 28px/1.1 var(--font-sans); letter-spacing: -0.02em; }
+.v2-micro { font: 500 11px/1.3 var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; }
 .v2-number { font: 400 13px/1.3 var(--font-mono); }
 .tnum { font-variant-numeric: tabular-nums; }
 .ink2 { color: var(--ink-secondary); } .ink3 { color: var(--ink-tertiary); }
+.dots { flex: none; display: block; }
+.readout { display: flex; align-items: flex-end; gap: var(--space-8); min-height: 30px; }
 
 /* Layout helpers */
 .col { display: flex; flex-direction: column; } .col > * { flex-shrink: 0; }
-.row { display: flex; align-items: center; } .row.top { align-items: flex-start; } .row.top .mint { margin-top: var(--space-8); }
-.wrap { flex-wrap: wrap; } .grow { flex: 1 1 0; min-width: 0; } .stretch { align-items: stretch; }
+.row { display: flex; align-items: center; }
+.wrap { flex-wrap: wrap; } .grow { flex: 1 1 0; min-width: 0; }
 .g4 { gap: var(--space-4); } .g8 { gap: var(--space-8); } .g12 { gap: var(--space-12); } .g16 { gap: var(--space-16); } .g20 { gap: var(--space-20); } .g24 { gap: var(--space-24); } .g32 { gap: var(--space-32); }
 .mt8 { margin-top: var(--space-8); } .mt16 { margin-top: var(--space-16); }
 .pad { padding-left: var(--gl); padding-right: var(--gr); }
@@ -80,59 +85,62 @@ i { font-style: normal; }
 .ic { flex: none; display: block; }
 .food { flex: none; display: inline-block; line-height: 1; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; }
 .dot { flex: none; display: inline-block; width: 8px; height: 8px; border-radius: var(--radius-pill); }
-.mint { flex: none; display: inline-block; width: 6px; height: 6px; border-radius: var(--radius-pill); background: var(--pip-mint); }
+.mint { flex: none; display: inline-block; width: 7px; height: 7px; border-radius: var(--radius-pill); background: var(--accent); }
 .why { display: flex; align-items: center; gap: var(--space-8); }
 .sec { padding-top: var(--space-8); padding-bottom: var(--space-4); }
 .linkish { display: inline-flex; align-items: center; gap: var(--space-4); height: var(--control-md); }
 .hscroll { display: flex; gap: var(--space-12); overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; padding-top: var(--space-4); padding-bottom: var(--space-4); } .hscroll::-webkit-scrollbar { display: none; }
 .pad > .hscroll { margin-left: calc(-1 * var(--gl)); margin-right: calc(-1 * var(--gr)); padding-left: var(--gl); padding-right: var(--gr); }
+.boot { padding-top: var(--space-48); }
 
 /* Screens */
 .tabview, .screen { position: absolute; inset: 0; }
 .screen { display: flex; flex-direction: column; }
-.screen > .scroll { flex: 1; min-height: 0; animation: pk-rise var(--duration-base) var(--ease-out); }
-.body-tabs { padding-bottom: calc(176px + var(--sb)); }
-.dockbg { position: absolute; z-index: 3; left: 0; right: 0; bottom: 0; height: calc(84px + var(--sb)); background: var(--surface-bg); } .dockbg.tall { height: calc(150px + var(--sb)); }
+.screen > .scroll { flex: 1; min-height: 0; animation: rise var(--duration-base) var(--ease-out); }
+.body-tabs { padding-bottom: calc(112px + var(--sb)); }
+.dockbg { position: absolute; z-index: 3; left: 0; right: 0; bottom: 0; height: calc(46px + var(--sb)); background: var(--surface-bg); }
 .topbar { flex: none; display: flex; align-items: center; justify-content: space-between; gap: var(--space-12); min-height: calc(var(--control-md) + var(--space-12) + var(--st)); padding-top: calc(var(--space-12) + var(--st)); }
 .topbar .ticks { flex: 1; }
 .full { position: absolute; inset: 0; z-index: 20; display: flex; flex-direction: column; background: var(--surface-bg); color: var(--ink-primary); animation: fade-in var(--duration-base) var(--ease-out); }
+.full.grid-bg { background-image: radial-gradient(circle, var(--line-hair) 1px, transparent 1.4px); background-size: 14px 14px; background-position: 7px 7px; }
 .full.out, .ov.out { animation: fade-out var(--duration-fast) var(--ease-in) forwards; pointer-events: none; }
 .foot { flex: none; padding-top: var(--space-12); padding-bottom: calc(var(--space-16) + var(--sb)); }
 .flow-body, .onb-body { flex: 1; min-height: 0; }
-.flow-body { padding-top: var(--space-12); }
-.onb-body { padding-top: var(--space-24); }
+.flow-body { padding-top: var(--space-12); } .onb-body { padding-top: var(--space-24); }
 @keyframes fade-in { from { opacity: 0; } }
 @keyframes fade-out { to { opacity: 0; } }
+@keyframes rise { from { transform: translateY(12px); opacity: 0; } }
+@keyframes pop { from { transform: scale(0.4); opacity: 0; } }
+@keyframes floaty { from { transform: translateY(-5px); } to { transform: translateY(5px); } }
+@keyframes bloom { from { transform: scale(0.08); opacity: 0; } 30% { opacity: 1; } to { transform: scale(1); } }
+.pk-enter { animation: rise var(--duration-base) var(--ease-out); }
+.pk-pop { animation: pop var(--duration-base) var(--ease-spring); }
 
-/* Aura: the only place gradients are allowed. Blob order: 1 top right, 2 bottom left, 3 bottom right, 4 top left. */
+/* Food orb and the big blended glow used for finished moments */
+.orb { position: relative; flex: none; display: inline-block; isolation: isolate; }
+.orb-face { position: absolute; inset: 0; display: grid; place-items: center; border-radius: 50%; background: radial-gradient(120% 120% at 28% 20%, var(--o1) 0%, var(--o2) 84%); color: var(--ink-secondary); }
+.orb-glow { position: absolute; inset: 18% 10% -8%; z-index: -1; border-radius: 50%; background: var(--o2); filter: blur(20px); opacity: 0.6; }
+.orb.is-done .food { opacity: 0.45; }
+.orb-empty { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px dashed var(--ink-tertiary); color: var(--ink-tertiary); }
+.cluster { position: relative; flex: none; height: 222px; }
+.cl-it { position: absolute; animation: floaty 6s ease-in-out infinite alternate; }
 .pk-aura {
-  --a0: var(--aura-pip-base); --a1: var(--aura-pip-1); --a2: var(--aura-pip-2); --a3: var(--aura-pip-3); --a4: var(--aura-pip-4);
+  --a0: var(--glow-base); --a1: var(--glow-1); --a2: var(--glow-2); --a3: var(--glow-3); --a4: var(--glow-4);
   flex: none; display: block; border-radius: var(--radius-pill); background-color: var(--a0);
-  background-image:
-    radial-gradient(62% 62% at 30% 20%, var(--a4) 0%, transparent 100%),
-    radial-gradient(62% 62% at 85% 80%, var(--a3) 0%, transparent 100%),
-    radial-gradient(60% 60% at 10% 90%, var(--a2) 0%, transparent 100%),
-    radial-gradient(55% 55% at 90% 15%, var(--a1) 0%, transparent 100%);
+  background-image: radial-gradient(62% 62% at 30% 20%, var(--a1) 0%, transparent 100%), radial-gradient(62% 62% at 85% 80%, var(--a3) 0%, transparent 100%), radial-gradient(60% 60% at 10% 90%, var(--a2) 0%, transparent 100%), radial-gradient(55% 55% at 90% 15%, var(--a4) 0%, transparent 100%);
   background-repeat: no-repeat;
 }
-.pk-aura--chrome { --a0: var(--aura-chrome-base); --a1: var(--aura-chrome-1); --a2: var(--aura-chrome-2); --a3: var(--aura-chrome-3); --a4: var(--aura-chrome-4); }
+.pk-aura--chrome { --a0: var(--chrome-base); --a1: var(--chrome-4); --a2: var(--chrome-2); --a3: var(--chrome-3); --a4: var(--chrome-1); }
 .pk-aura--tile { border-radius: var(--radius-card); }
-.pk-aura--alive { background-size: 150% 150%; animation: pk-aura-drift var(--duration-drift) var(--ease-standard) infinite alternate; }
-.pk-aura.listening { animation: pk-aura-drift var(--duration-drift) var(--ease-standard) infinite alternate, pk-pulse var(--duration-bloom) var(--ease-standard) infinite; }
-@keyframes pk-aura-drift { from { background-position: 0% 0%, 100% 100%, 0% 100%, 100% 0%; } to { background-position: 100% 70%, 0% 30%, 70% 0%, 20% 100%; } }
-@keyframes pk-pulse { 50% { transform: scale(1.14); } }
-@keyframes pk-bloom { from { transform: scale(0.08); opacity: 0; } 30% { opacity: 1; } to { transform: scale(1); } }
-@keyframes pk-rise { from { transform: translateY(12px); opacity: 0; } }
-.pk-enter { animation: pk-rise var(--duration-base) var(--ease-out); }
 
-/* Button */
-.pk-btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-8); flex: none; height: var(--control-lg); padding: 0 var(--space-24); border: 1px solid transparent; border-radius: var(--radius-pill); background: var(--ink-primary); color: var(--ink-inverse); white-space: nowrap; text-align: center; transition: transform var(--duration-tap) var(--ease-standard), opacity var(--duration-fast) var(--ease-standard); }
+/* Buttons */
+.pk-btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-8); flex: none; height: var(--control-lg); padding: 0 var(--space-24); border-radius: var(--radius-pill); background: var(--ink-primary); color: var(--ink-inverse); white-space: nowrap; text-align: center; transition: transform var(--duration-tap) var(--ease-standard), opacity var(--duration-fast) var(--ease-standard); }
 .pk-btn.grow { flex: 1 1 0; padding: 0 var(--space-12); }
 .pk-btn:active { transform: scale(0.97); }
 .pk-btn:disabled { opacity: 0.32; cursor: default; }
-.pk-btn--secondary { background: none; color: var(--ink-primary); border-color: var(--line-hair); }
-.pk-btn--secondary.is-on { background: var(--ink-primary); color: var(--ink-inverse); border-color: var(--ink-primary); }
-.pk-btn--glass { background: color-mix(in srgb, var(--surface-inset) 70%, transparent); color: var(--ink-primary); border-color: var(--line-hair); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); }
+.pk-btn--secondary { background: var(--surface-card); color: var(--ink-primary); }
+.pk-btn--secondary.is-on { background: var(--ink-primary); color: var(--ink-inverse); }
+.pk-btn--glass { background: color-mix(in srgb, var(--surface-inset) 70%, transparent); color: var(--ink-primary); border: 1px solid var(--line-hair); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); }
 .pk-btn--md { height: var(--control-md); padding: 0 var(--space-20); }
 .pk-btn--sm { height: var(--control-sm); padding: 0 var(--space-16); }
 .pk-btn--block { display: flex; width: 100%; }
@@ -141,47 +149,42 @@ i { font-style: normal; }
 .pk-iconbtn:disabled { opacity: 0.32; cursor: default; }
 .pk-iconbtn.ghost { visibility: hidden; }
 .pk-iconbtn.big, .pk-iconbtn.x2 { width: var(--control-lg); height: var(--control-lg); text-align: center; }
+.headicon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--ink-primary); color: var(--ink-inverse); }
 
-/* Ask Pip bar and tab bar: the two floating elements, and the only shadows */
-.pk-ask { display: flex; align-items: center; gap: var(--space-12); height: 58px; padding: 0 9px 0 6px; border: 1px solid var(--line-hair); border-radius: var(--radius-pill); background: var(--surface-bg); box-shadow: var(--shadow-float); }
-.pk-ask__orb { width: 46px; height: 46px; }
-.pk-ask__input { flex: 1; min-width: 0; border: 0; background: none; color: var(--ink-primary); text-overflow: ellipsis; outline: none; cursor: pointer; }
-.pk-ask__input::placeholder { color: var(--ink-tertiary); opacity: 1; }
-.pk-ask__camera { flex: none; display: grid; place-items: center; width: var(--control-md); height: var(--control-md); margin: 0 -9px; color: var(--ink-secondary); }
-.pk-ask__mic { flex: none; display: grid; place-items: center; width: var(--control-md); height: var(--control-md); border-radius: var(--radius-pill); background: var(--ink-primary); color: var(--ink-inverse); }
-.askbar { position: absolute; z-index: 4; left: var(--gl); right: var(--gr); bottom: calc(60px + var(--space-12) + var(--space-8) + var(--sb)); }
-.tabbar { position: absolute; z-index: 5; left: var(--gl); right: var(--gr); bottom: calc(var(--space-12) + var(--sb)); height: 60px; display: grid; grid-template-columns: repeat(4, 1fr); align-items: center; padding: 0 var(--space-4); border: 1px solid var(--line-hair); border-radius: var(--radius-pill); background: var(--surface-bg); box-shadow: var(--shadow-float); }
-.tab { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-4); height: 50px; border-radius: var(--radius-pill); color: var(--ink-secondary); }
-.tab[aria-current] { color: var(--ink-primary); }
-.tab-ind { position: absolute; left: var(--space-4); top: 4px; width: calc((100% - var(--space-8)) / 4); height: 50px; border-radius: var(--radius-pill); background: var(--surface-card); transform: translateX(calc(var(--i) * 100%)); transition: transform var(--duration-base) var(--ease-standard); }
+/* Tab bar: the one floating element */
+.tabbar { position: absolute; z-index: 5; left: var(--gl); right: var(--gr); bottom: calc(var(--space-12) + var(--sb)); height: 64px; display: grid; grid-template-columns: repeat(4, 1fr); align-items: center; padding: 0 6px; border: 1px solid var(--line-hair); border-radius: var(--radius-pill); background: var(--surface-bg); box-shadow: var(--shadow-float); }
+.tab { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-4); height: 52px; border-radius: var(--radius-pill); color: var(--ink-secondary); transition: opacity var(--duration-fast) var(--ease-standard); }
+.tab[aria-current] { color: var(--ink-inverse); }
+.tab-ind { position: absolute; left: 6px; top: 5px; width: calc((100% - 12px) / 4); height: 52px; border-radius: var(--radius-pill); background: var(--ink-primary); transform: translateX(calc(var(--i) * 100%)); transition: transform var(--duration-base) var(--ease-spring); }
 
 /* Small controls */
-.seg { position: relative; display: grid; grid-template-columns: repeat(var(--n), 1fr); height: var(--control-md); padding: 3px; border-radius: var(--radius-pill); background: var(--surface-card); }
-.seg-thumb { position: absolute; left: 3px; top: 3px; bottom: 3px; width: calc((100% - 6px) / var(--n)); border-radius: var(--radius-pill); background: var(--surface-inset); transform: translateX(calc(var(--i) * 100%)); transition: transform var(--duration-base) var(--ease-standard); }
+.seg { position: relative; display: grid; grid-template-columns: repeat(var(--n), 1fr); height: 44px; padding: 4px; border-radius: var(--radius-pill); background: var(--surface-card); }
+.seg-thumb { position: absolute; left: 4px; top: 4px; bottom: 4px; width: calc((100% - 8px) / var(--n)); border-radius: var(--radius-pill); background: var(--surface-inset); transform: translateX(calc(var(--i) * 100%)); transition: transform var(--duration-base) var(--ease-spring); }
 .seg-opt { position: relative; text-align: center; color: var(--ink-secondary); border-radius: var(--radius-pill); } .seg-opt[aria-selected="true"] { color: var(--ink-primary); }
-.sw { position: relative; flex: none; width: 48px; height: 28px; border-radius: var(--radius-pill); background: var(--line-hair); }
-.sw-fill { position: absolute; inset: 0; border-radius: inherit; background: var(--ink-primary); opacity: 0; transition: opacity var(--duration-fast) var(--ease-standard); } .sw.on .sw-fill { opacity: 1; }
-.sw-knob { position: absolute; left: 3px; top: 3px; width: 22px; height: 22px; border-radius: var(--radius-pill); background: var(--surface-inset); transition: transform var(--duration-fast) var(--ease-standard); } .sw.on .sw-knob { transform: translateX(20px); }
+.sw { position: relative; flex: none; width: 50px; height: 30px; border-radius: var(--radius-pill); background: var(--line-hair); }
+.sw-fill { position: absolute; inset: 0; border-radius: inherit; background: var(--accent); opacity: 0; transition: opacity var(--duration-fast) var(--ease-standard); } .sw.on .sw-fill { opacity: 1; }
+.sw-knob { position: absolute; left: 3px; top: 3px; width: 24px; height: 24px; border-radius: var(--radius-pill); background: var(--surface-inset); transition: transform var(--duration-base) var(--ease-spring); } .sw.on .sw-knob { transform: translateX(20px); }
 .rowline, .optrow { display: flex; align-items: center; gap: var(--space-12); width: 100%; min-height: var(--control-lg); padding: var(--space-12) 0; border-bottom: 1px solid var(--line-hair); }
 .rowline.col { align-items: flex-start; } .rowline.stretch { align-items: stretch; }
+.optrow .food { width: 28px; text-align: center; }
 .ticks { display: flex; gap: var(--space-4); } .ticks i { flex: 1; height: 3px; border-radius: var(--radius-pill); background: var(--line-hair); } .ticks i.on { background: var(--ink-primary); }
-.stepper { display: flex; align-items: center; gap: var(--space-8); } .stepper-n { min-width: 24px; text-align: center; }
+.stepper { display: flex; align-items: center; gap: var(--space-12); } .stepper-n { display: grid; place-items: center; min-width: 20px; }
+.tick { position: absolute; right: -3px; top: -3px; display: grid; place-items: center; width: 18px; height: 18px; border-radius: var(--radius-pill); background: var(--accent); color: var(--accent-ink); animation: pop var(--duration-base) var(--ease-spring); }
 .tickbox { flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: var(--radius-pill); border: 1px solid var(--ink-tertiary); } .tickbox svg { opacity: 0; }
-.tickbox.on { background: var(--ink-primary); border-color: var(--ink-primary); color: var(--ink-inverse); } .tickbox.on svg { opacity: 1; }
+.tickbox.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); } .tickbox.on svg { opacity: 1; }
 .radio { position: relative; flex: none; width: 22px; height: 22px; border-radius: var(--radius-pill); border: 1px solid var(--ink-tertiary); }
 .radio.on { border-color: var(--ink-primary); } .radio.on::after { content: ""; position: absolute; inset: 5px; border-radius: var(--radius-pill); background: var(--ink-primary); }
 .field { height: var(--control-lg); min-width: 0; padding: 0 var(--space-20); border: 1px solid var(--line-hair); border-radius: var(--radius-pill); background: var(--surface-bg); color: var(--ink-primary); outline: none; font-size: 16px; user-select: text; -webkit-user-select: text; }
 .field:focus { border-color: var(--ink-primary); } .field::placeholder { color: var(--ink-tertiary); opacity: 1; }
-.tag { display: inline-flex; align-items: center; gap: var(--space-8); height: 28px; padding: 0 var(--space-12); border-radius: var(--radius-pill); background: var(--surface-inset); border: 1px solid var(--line-hair); }
-.boot { padding-top: var(--space-48); }
-.note { padding: var(--space-16); border-radius: var(--radius-card); background: var(--surface-card); }
-.thumb { position: relative; flex: none; display: inline-grid; place-items: center; border-radius: var(--radius-cell); background: var(--surface-card); color: var(--ink-secondary); } .thumb.is-done .food { opacity: 0.4; }
-.tick { position: absolute; right: -4px; top: -4px; display: grid; place-items: center; width: 18px; height: 18px; border-radius: var(--radius-pill); background: var(--ink-primary); color: var(--ink-inverse); }
+.tag { display: inline-flex; align-items: center; gap: var(--space-8); height: 28px; padding: 0 var(--space-12); border-radius: var(--radius-pill); background: var(--surface-inset); }
+.sheet .tag, .recipe .tag { background: var(--surface-card); }
+.note { padding: var(--space-16); border-radius: var(--radius-tile); background: var(--surface-card); }
+.thumb { position: relative; flex: none; display: inline-grid; place-items: center; border-radius: var(--radius-tile); background: var(--surface-card); color: var(--ink-secondary); }
 .avatar { flex: none; display: inline-grid; place-items: center; border-radius: var(--radius-pill); color: var(--ink-inverse); } .avatar.on { outline: 2px solid var(--ink-primary); outline-offset: 3px; }
-.bar { position: relative; height: 4px; border-radius: var(--radius-pill); background: var(--line-hair); overflow: hidden; }
+.bar { position: relative; height: 6px; border-radius: var(--radius-pill); background: var(--surface-card); overflow: hidden; }
 .bar i { position: absolute; inset: 0; border-radius: inherit; transform-origin: left center; transition: transform var(--duration-slow) var(--ease-out); }
-.bar-fill { background: var(--ink-primary); } .bar-est { background: var(--ink-tertiary); }
-.toast { position: absolute; z-index: 60; left: var(--gl); right: var(--gr); bottom: calc(150px + var(--sb)); display: flex; align-items: center; gap: var(--space-12); min-height: 44px; padding: var(--space-8) var(--space-20); border-radius: var(--radius-pill); background: var(--surface-card); border: 1px solid var(--line-hair); }
+.bar-fill { background: var(--accent); } .bar-est { background: color-mix(in srgb, var(--accent) 38%, var(--surface-card)); }
+.toast { position: absolute; z-index: 60; left: var(--gl); right: var(--gr); bottom: calc(92px + var(--sb)); display: flex; align-items: center; gap: var(--space-12); min-height: 48px; padding: var(--space-8) var(--space-20); border-radius: var(--radius-pill); background: var(--ink-primary); color: var(--ink-inverse); }
 .toast-act { flex: none; text-decoration: underline; text-underline-offset: 3px; }
 
 /* Sheets */
@@ -197,101 +200,98 @@ i { font-style: normal; }
 /* Dial and arc picker */
 .dial-win { position: relative; height: 96px; }
 .dial-cv { position: absolute; inset: 0; width: 100%; height: 100%; }
-.dial-needle { position: absolute; left: 50%; top: 4px; width: 2px; height: 34px; margin-left: -1px; border-radius: var(--radius-pill); background: var(--ink-primary); }
+.dial-needle { position: absolute; left: 50%; top: 2px; width: 3px; height: 38px; margin-left: -1.5px; border-radius: var(--radius-pill); background: var(--ink-primary); }
 .dial-sc { position: absolute; inset: 0; display: flex; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scrollbar-width: none; touch-action: pan-x; cursor: ew-resize; } .dial-sc::-webkit-scrollbar { display: none; }
 .dial-snap { flex: none; width: 12px; height: 100%; scroll-snap-align: center; } .dial-pad { flex: none; width: calc(50% - 6px); }
 .arc { position: relative; height: 300px; overflow: hidden; }
-.arc-line { position: absolute; left: var(--gl); top: 0; width: 60px; height: 100%; color: var(--line-hair); }
-.arc-mark { position: absolute; left: calc(var(--gl) + 27px); top: 50%; width: 6px; height: 28px; margin-top: -14px; border-radius: var(--radius-pill); background: var(--ink-primary); }
+.arc-line { position: absolute; left: var(--gl); top: 0; width: 60px; height: 100%; color: var(--ink-tertiary); }
+.arc-mark { position: absolute; left: calc(var(--gl) + 27px); top: 50%; width: 7px; height: 30px; margin-top: -15px; border-radius: var(--radius-pill); background: var(--ink-primary); }
 .arc-sc { position: absolute; inset: 0; overflow-y: auto; scroll-snap-type: y mandatory; scrollbar-width: none; padding-left: calc(var(--gl) + 28px); } .arc-sc::-webkit-scrollbar { display: none; }
 .arc-pad { display: block; height: 116px; }
 .arc-item { display: flex; flex-direction: column; justify-content: center; gap: 2px; width: 100%; height: 68px; padding-right: var(--gr); scroll-snap-align: center; transform-origin: left center; }
 
-/* Celebration */
+/* Finished moments: one glow, one number, one line, one button */
 .celebrate { z-index: 30; overflow: hidden; }
-.cel-top { position: absolute; top: 0; left: 50%; height: 62%; aspect-ratio: 1; transform: translateX(-50%); }
+.cel-top { position: absolute; top: 0; left: 50%; height: 60%; aspect-ratio: 1; transform: translateX(-50%); }
 .cel-bloom, .cel-aura { position: absolute; transform-origin: 50% 120%; }
 .cel-bloom { left: -12%; top: -16%; width: 124%; height: 124%; opacity: 0.55; filter: blur(60px); }
-.cel-aura { left: 0; top: -4%; width: 100%; height: 100%; }
+.cel-aura { left: 0; top: -6%; width: 100%; height: 100%; }
 .cel-body { position: absolute; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; padding-bottom: calc(var(--space-32) + var(--sb)); }
-.cel-meta { margin-left: var(--space-8); } .cel-number { margin-left: var(--space-4); } .cel-line { max-width: 330px; margin: var(--space-12) var(--space-8) var(--space-32); }
-.celebrate.is-playing .cel-bloom { animation: pk-bloom var(--duration-bloom) var(--ease-out) both; }
-.celebrate.is-playing .cel-aura { animation: pk-bloom var(--duration-bloom) var(--ease-spring) both; }
-.celebrate.is-playing .cel-meta { animation: pk-rise var(--duration-base) var(--ease-out) 500ms both; }
-.celebrate.is-playing .cel-number { animation: pk-rise var(--duration-base) var(--ease-out) 600ms both; }
-.celebrate.is-playing .cel-line { animation: pk-rise var(--duration-base) var(--ease-out) 1300ms both; }
-.celebrate.is-playing .cel-action { animation: pk-rise var(--duration-base) var(--ease-out) 1700ms both; }
+.cel-meta { margin: 0 0 var(--space-12) var(--space-4); } .cel-number { margin-left: var(--space-4); } .cel-line { max-width: 330px; margin: var(--space-20) var(--space-4) var(--space-32); }
+.celebrate.is-playing .cel-bloom { animation: bloom var(--duration-bloom) var(--ease-out) both; }
+.celebrate.is-playing .cel-aura { animation: bloom var(--duration-bloom) var(--ease-spring) both; }
+.celebrate.is-playing .cel-meta { animation: rise var(--duration-base) var(--ease-out) 500ms both; }
+.celebrate.is-playing .cel-number { animation: rise var(--duration-base) var(--ease-out) 600ms both; }
+.celebrate.is-playing .cel-line { animation: rise var(--duration-base) var(--ease-out) 1300ms both; }
+.celebrate.is-playing .cel-action { animation: rise var(--duration-base) var(--ease-out) 1700ms both; }
 
-/* Onboarding and profile */
+/* Onboarding and home */
 .whopick { display: flex; flex-direction: column; align-items: center; gap: var(--space-12); padding: var(--space-4); transition: opacity var(--duration-fast) var(--ease-standard); } .whopick:not(.on) { opacity: 0.45; }
-
-/* Home */
 .whoami { flex: none; display: flex; align-items: center; gap: var(--space-8); height: var(--control-md); padding: 0 var(--space-12) 0 var(--space-4); border-radius: var(--radius-pill); background: var(--surface-card); }
 .days { display: flex; justify-content: space-between; padding-bottom: var(--space-8); }
-.days.sm { padding: 0 var(--space-4); } .days.sm .day { width: 28px; height: 28px; } .days.sm .day.ok::after { bottom: -7px; }
 .day { position: relative; display: grid; place-items: center; width: 36px; height: 36px; border-radius: var(--radius-pill); background: var(--surface-card); color: var(--ink-secondary); text-align: center; }
 .day.on { background: var(--ink-primary); color: var(--ink-inverse); }
-.day.ok::after { content: ""; position: absolute; left: 50%; bottom: -8px; width: 4px; height: 4px; margin-left: -2px; border-radius: var(--radius-pill); background: var(--ink-primary); }
-.pipline { display: flex; align-items: center; gap: var(--space-12); width: 100%; min-height: var(--control-lg); padding: var(--space-12) var(--space-16); border-radius: var(--radius-card); background: var(--surface-card); }
-.hero-top { display: flex; align-items: flex-start; justify-content: space-between; }
-.hero-food { flex: none; display: block; margin: calc(-1 * var(--space-8)) calc(-1 * var(--space-8)) calc(-1 * var(--space-12)) 0; }
-.nudge { padding-top: var(--space-24); }
+.day.ok::after { content: ""; position: absolute; left: 50%; bottom: -8px; width: 5px; height: 5px; margin-left: -2.5px; border-radius: var(--radius-pill); background: var(--accent); }
+.days.sm { padding: 0 var(--space-4); } .days.sm .day { width: 28px; height: 28px; } .days.sm .day.ok::after { bottom: -8px; }
+.hint { display: flex; align-items: center; gap: var(--space-12); width: 100%; min-height: 52px; padding: var(--space-12) var(--space-16) var(--space-12) var(--space-20); border-radius: var(--radius-card); background: var(--surface-card); }
+.hero-top { display: flex; align-items: flex-start; justify-content: space-between; min-height: 156px; }
+.hero-food { flex: none; display: block; border-radius: 50%; transition: transform var(--duration-base) var(--ease-spring); } .hero-food:active { transform: scale(0.96); }
+.nudge { padding-top: var(--space-16); }
 .rest { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-12); }
-.rest-item { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-4); min-width: 0; } .rest-item .thumb { margin-bottom: var(--space-4); }
+.rest-item { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-4); min-width: 0; } .rest-item .orb { margin-bottom: var(--space-4); }
 
 /* Week board */
 .board { display: flex; flex-direction: column; gap: var(--space-4); padding: 0 var(--gr) 0 var(--gl); }
 .board-row { display: grid; grid-template-columns: 36px repeat(4, 1fr); gap: var(--space-8); }
 .board-head { align-items: center; height: 20px; } .board-head span { text-align: center; }
-.daytag { align-self: start; display: grid; place-items: center; height: 22px; margin-top: 12px; border-radius: var(--radius-pill); color: var(--ink-secondary); } .daytag.on { background: var(--ink-primary); color: var(--ink-inverse); }
-.cell { display: flex; flex-direction: column; align-items: center; gap: var(--space-4); min-width: 0; border-radius: var(--radius-cell); touch-action: pan-y; cursor: pointer; }
-.cell-th { position: relative; display: grid; place-items: center; width: 100%; height: 42px; border-radius: var(--radius-cell); background: var(--surface-card); }
-.cell.empty .cell-th { background: none; border: 1px dashed var(--ink-tertiary); }
+.daytag { align-self: start; display: grid; place-items: center; height: 22px; margin-top: 13px; border-radius: var(--radius-pill); color: var(--ink-secondary); } .daytag.on { background: var(--ink-primary); color: var(--ink-inverse); }
+.cell { display: flex; flex-direction: column; align-items: center; gap: var(--space-4); min-width: 0; touch-action: pan-y; cursor: pointer; }
+.cell-th { position: relative; display: grid; place-items: center; width: 100%; height: 48px; }
 .cell-n { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; width: 100%; height: 32px; color: var(--ink-secondary); text-align: center; }
-.cell.is-done .food { opacity: 0.4; } .cell.lifted { opacity: 0.25; }
-.cell.drop .cell-th { outline: 1.5px solid var(--ink-primary); outline-offset: 2px; }
-.cell.ghost { position: absolute; z-index: 80; pointer-events: none; transform-origin: center 21px; }
-.cell.ghost .cell-th { border: 1px solid var(--ink-primary); animation: none; }
-.cell.ghost .cell-n { display: none; }
-.badge { position: absolute; right: 6px; top: 6px; display: grid; }
+.cell.lifted { opacity: 0.25; }
+.cell.drop .orb-face, .cell.drop .orb-empty { outline: 2px solid var(--ink-primary); outline-offset: 3px; }
+.cell.ghost { position: absolute; z-index: 80; pointer-events: none; transform-origin: center 24px; } .cell.ghost .cell-n { display: none; } .cell.ghost .cell-th { animation: none; }
+.badge { position: absolute; left: calc(50% + 10px); top: 0; display: grid; padding: 2px; border-radius: 50%; background: var(--surface-bg); }
 
 /* Plan flow */
-.keeprow { display: flex; align-items: center; gap: var(--space-16); width: 100%; padding: var(--space-16) 0; border-bottom: 1px solid var(--line-hair); }
-.keeprow .food, .keeprow .v2-title { transition: opacity var(--duration-fast) var(--ease-standard); } .keeprow.off .food, .keeprow.off .v2-title { opacity: 0.32; }
-.cluster { display: flex; flex-direction: column; align-items: center; gap: var(--space-8); padding: var(--space-8) 0; }
-.cluster-row { display: flex; gap: var(--space-16); }
-.pchip { display: flex; flex-direction: column; align-items: center; gap: var(--space-8); width: 92px; transition: opacity var(--duration-fast) var(--ease-standard); } .pchip.dim { opacity: 0.4; }
-.pchip-o { position: relative; display: grid; place-items: center; width: 84px; height: 84px; border-radius: var(--radius-pill); background: var(--surface-card); transition: transform var(--duration-tap) var(--ease-standard); }
-.pchip:active .pchip-o { transform: scale(0.94); }
-.pchip.on .pchip-o { outline: 1.5px solid var(--ink-primary); outline-offset: 3px; } .pchip .tick { right: 2px; top: 2px; } .pchip-mint { position: absolute; right: 10px; top: 10px; }
+.keeprow { display: flex; align-items: center; gap: var(--space-16); width: 100%; padding: var(--space-12) 0; border-bottom: 1px solid var(--line-hair); }
+.keeprow .orb, .keeprow .v2-title { transition: opacity var(--duration-fast) var(--ease-standard); } .keeprow.off .orb, .keeprow.off .v2-title { opacity: 0.32; }
+.orbit { position: relative; flex: none; align-self: center; width: 330px; height: 356px; }
+.orbit-lines { position: absolute; left: 0; top: 0; width: 330px; height: 330px; }
+.orbit-ring { fill: none; stroke: var(--ink-tertiary); stroke-width: 1; stroke-dasharray: 1 7; stroke-linecap: round; }
+.orbit-line { stroke: var(--ink-primary); stroke-width: 1.5; stroke-dasharray: 122; stroke-dashoffset: 122; transition: stroke-dashoffset var(--duration-slow) var(--ease-out); } .orbit-line.on { stroke-dashoffset: 0; }
+.orbit-core { position: absolute; left: 165px; top: 165px; display: grid; place-items: center; width: 78px; height: 78px; margin: -39px 0 0 -39px; border-radius: 50%; background: var(--ink-primary); color: var(--ink-inverse); }
+.pchip { position: absolute; display: flex; flex-direction: column; align-items: center; gap: var(--space-4); width: 84px; margin: -33px 0 0 -42px; transition: opacity var(--duration-fast) var(--ease-standard); } .pchip.dim { opacity: 0.38; }
+.pchip-o { position: relative; display: block; height: 66px; transition: transform var(--duration-base) var(--ease-spring); }
+.pchip.on .pchip-o { transform: scale(1.12); } .pchip:active .pchip-o { transform: scale(0.94); }
+.pchip .v2-label { padding: 1px var(--space-8); border-radius: var(--radius-pill); background: var(--surface-bg); }
+.pchip-mint { position: absolute; right: 1px; top: 1px; width: 12px; height: 12px; border: 2px solid var(--surface-bg); }
 .tray { min-height: 32px; flex-wrap: wrap; }
-.trayitem { position: relative; flex: none; display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: var(--radius-pill); background: var(--surface-card); }
-.trayitem.wait { background: none; border: 1px dashed var(--ink-tertiary); }
-.trayitem i { position: absolute; right: -6px; top: -6px; padding: 0 var(--space-4); border-radius: var(--radius-pill); background: var(--ink-primary); color: var(--ink-inverse); }
-.deck { position: relative; flex: 1; min-height: 300px; margin: 0 var(--gr) var(--space-24) var(--gl); perspective: 1200px; }
+.trayitem { position: relative; flex: none; display: inline-block; height: 32px; }
+.trayitem i { position: absolute; right: -8px; top: -6px; padding: 0 var(--space-4); border-radius: var(--radius-pill); background: var(--ink-primary); color: var(--ink-inverse); }
+.deck { position: relative; flex: 1; min-height: 300px; margin: 0 var(--gr) var(--space-24) var(--gl); }
 .deck-end { position: absolute; left: 0; right: 0; bottom: var(--space-24); }
-.card { position: absolute; inset: 0; border-radius: var(--radius-card); background: var(--surface-card); touch-action: none; cursor: grab; transform-origin: 50% 100%; transition: transform var(--duration-base) var(--ease-out); }
-.card.c1 { transform: translateY(10px) scale(0.94); background: var(--line-hair); } .card.c2 { transform: translateY(20px) scale(0.88); background: var(--line-hair); opacity: 0.55; }
+.card { position: absolute; inset: 0; border-radius: var(--radius-card); background: linear-gradient(168deg, var(--o1) 0%, var(--o2) 135%); touch-action: none; cursor: grab; transform-origin: 50% 100%; transition: transform var(--duration-base) var(--ease-spring); }
+.card.c1 { transform: translateY(10px) scale(0.94); } .card.c2 { transform: translateY(20px) scale(0.88); }
 .card-in { position: absolute; inset: 0; display: flex; flex-direction: column; gap: var(--space-12); padding: var(--space-20); transition: opacity var(--duration-base) var(--ease-out); }
 .card.c1 .card-in, .card.c2 .card-in { opacity: 0; }
 .card-food { flex: 1; min-height: 0; display: grid; place-items: center; }
-.card-por { padding-top: var(--space-12); border-top: 1px solid var(--line-hair); }
-.heart { flex: none; display: grid; place-items: center; width: var(--control-md); height: var(--control-md); margin: -10px -10px -10px 0; border-radius: var(--radius-pill); color: var(--ink-secondary); } .heart.on { color: var(--ink-primary); } .heart.on svg { fill: currentColor; }
-.stamp { position: absolute; top: 60px; padding: var(--space-8) var(--space-16); border-radius: var(--radius-pill); background: var(--ink-primary); color: var(--ink-inverse); opacity: 0; pointer-events: none; } .stamp-yes { left: var(--space-20); } .stamp-no { right: var(--space-20); }
-.flip { position: absolute; inset: 0; z-index: 3; transform-style: preserve-3d; animation: flip var(--duration-slow) var(--ease-standard) both; cursor: pointer; }
-.flip.out { transform: rotateY(180deg); animation: fade-out var(--duration-fast) var(--ease-in) forwards; }
-.flip .face { backface-visibility: hidden; -webkit-backface-visibility: hidden; transition: none; } .flip .back { transform: rotateY(180deg); }
-@keyframes flip { from { transform: translateX(var(--fx-x)) rotate(var(--fx-r)) rotateY(0deg); } to { transform: translateX(0) rotate(0deg) rotateY(180deg); } }
+.card-food .food { filter: drop-shadow(0 14px 16px color-mix(in srgb, var(--ink-primary) 22%, transparent)); }
+.card .v2-display { font-size: 28px; }
+.card-por { padding-top: var(--space-12); border-top: 1px solid color-mix(in srgb, var(--ink-primary) 14%, transparent); }
+.card .mint { background: var(--ink-primary); }
+.heart { flex: none; display: grid; place-items: center; width: var(--control-md); height: var(--control-md); margin: -10px -10px -10px 0; border-radius: var(--radius-pill); } .heart.on svg { fill: currentColor; }
+.stamp { position: absolute; top: 60px; padding: var(--space-8) var(--space-16); border-radius: var(--radius-pill); background: var(--ink-primary); color: var(--ink-inverse); opacity: 0; pointer-events: none; }
+.stamp-yes { left: var(--space-20); background: var(--accent); color: var(--accent-ink); } .stamp-no { right: var(--space-20); }
 .deck-actions { flex: none; padding-bottom: calc(var(--space-16) + var(--sb)); }
-.optrow .food { width: 28px; text-align: center; }
-.pickitem { flex: none; display: flex; flex-direction: column; align-items: center; gap: var(--space-8); width: 68px; text-align: center; } .pickitem.on .thumb { outline: 1.5px solid var(--ink-primary); outline-offset: 2px; }
+.timer { color: var(--ink-primary); }
+.pickitem { flex: none; display: flex; flex-direction: column; align-items: center; gap: var(--space-8); width: 68px; text-align: center; } .pickitem.on .thumb { outline: 2px solid var(--ink-primary); outline-offset: 2px; }
 
 /* Recipe, cook mode, rating, plate builder */
 .recipe { padding-bottom: var(--space-24); }
-.recipe-top { display: flex; align-items: flex-start; justify-content: space-between; }
-.recipe-top .food { margin: calc(-1 * var(--space-8)) calc(-1 * var(--space-4)) 0 0; }
-.fill { display: inline-flex; gap: 3px; } .fill i { width: 6px; height: 6px; border-radius: var(--radius-pill); background: var(--line-hair); } .fill i.on { background: var(--ink-primary); }
-.ingt { flex: none; display: flex; flex-direction: column; gap: var(--space-4); width: 116px; padding: var(--space-12); border-radius: var(--radius-photo); background: var(--surface-card); } .ingt .food { margin-bottom: var(--space-4); }
+.recipe-top { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-12); min-height: 108px; }
+.fill { display: inline-flex; gap: 3px; } .fill i { width: 7px; height: 7px; border-radius: var(--radius-pill); background: var(--line-hair); } .fill i.on { background: var(--ink-primary); }
+.ingt { flex: none; display: flex; flex-direction: column; gap: var(--space-4); width: 116px; padding: var(--space-12); border-radius: var(--radius-tile); background: var(--surface-card); } .ingt .food { margin-bottom: var(--space-4); }
 .steps { list-style: none; padding: 0; } .steps li { display: flex; gap: var(--space-12); padding: var(--space-12) 0; border-bottom: 1px solid var(--line-hair); } .steps li > :first-child { flex: none; width: 16px; padding-top: 2px; }
 .recipe-foot { flex: none; padding-top: var(--space-12); border-top: 1px solid var(--line-hair); }
 .cook-body { padding-top: var(--space-24); padding-bottom: var(--space-24); touch-action: pan-y; }
@@ -299,27 +299,24 @@ i { font-style: normal; }
 .timerbtn { align-self: flex-start; display: flex; align-items: center; gap: var(--space-12); padding: var(--space-8) var(--space-20) var(--space-8) var(--space-8); border-radius: var(--radius-pill); background: var(--surface-card); }
 .pcol { flex: none; width: 68px; justify-content: flex-end; text-align: right; }
 .faces { display: flex; justify-content: space-between; }
-.facebtn { display: grid; place-items: center; width: 56px; height: 56px; border-radius: var(--radius-pill); background: var(--surface-card); color: var(--ink-secondary); transition: transform var(--duration-tap) var(--ease-standard); }
-.facebtn:active { transform: scale(0.94); } .facebtn.on { background: var(--ink-primary); color: var(--ink-inverse); }
+.facebtn { display: grid; place-items: center; width: 56px; height: 56px; border-radius: var(--radius-pill); background: var(--surface-card); color: var(--ink-secondary); transition: transform var(--duration-base) var(--ease-spring); }
+.facebtn:active { transform: scale(0.94); } .facebtn.on { background: var(--ink-primary); color: var(--ink-inverse); transform: scale(1.1); }
 .plate-row { align-items: center; }
 .plate { position: relative; flex: none; width: 168px; height: 168px; } .plate svg { display: block; }
 .sector { fill: var(--surface-card); opacity: 0; transition: opacity var(--duration-base) var(--ease-out); } .sector.on { opacity: 1; }
-.plate-it { position: absolute; display: grid; place-items: center; width: 32px; height: 32px; margin: -16px 0 0 -16px; }
+.plate-it { position: absolute; display: grid; place-items: center; width: 32px; height: 32px; margin: -16px 0 0 -16px; animation: pop var(--duration-base) var(--ease-spring); }
 
-/* Groceries, snack, Pip */
+/* Groceries and the snack photo */
 .gwrap { position: relative; overflow: hidden; }
 .gunder { position: absolute; right: var(--gr); top: 0; bottom: 0; display: flex; align-items: center; }
 .gitem { position: relative; padding-left: var(--gl); padding-right: var(--gr); background: var(--surface-bg); touch-action: pan-y; cursor: pointer; }
 .gitem.is-checked .gname { text-decoration: line-through; color: var(--ink-secondary); } .gitem.is-checked .food { opacity: 0.4; }
 .viewfinder { position: relative; flex: none; display: flex; align-items: flex-end; justify-content: center; height: 260px; padding: var(--space-16); border-radius: var(--radius-card); overflow: hidden; background: var(--surface-card); }
 .vf-aura, .viewfinder img { position: absolute; inset: 0; width: 100%; height: 100%; } .viewfinder img { object-fit: cover; } .vf-btn { position: relative; }
-.pipsheet { height: 80%; }
-.pip-head { padding-bottom: var(--space-12); }
-.pipchat { padding-top: var(--space-8); padding-bottom: var(--space-12); }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 1ms !important; animation-delay: 0ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; scroll-behavior: auto !important; }
-  .pk-aura--alive, .pk-aura.listening { animation: none !important; }
+  .cl-it { animation: none !important; }
   .pk-btn:active, .pk-iconbtn:active, .facebtn:active, .pchip:active .pchip-o { transform: none; opacity: 0.8; }
 }
 </style>
@@ -640,7 +637,7 @@ const SNACK_EST = [
   [/bread|toast|sandwich|manakish|man.?ou/, 180, 320], [/egg/, 70, 90], [/coffee|latte|cappuccino/, 60, 140], [/juice|soda|cola/, 90, 150],
 ];
 
-/* ───────────── Core: state, portions, deck, week, groceries, Pip ───────────── */
+/* ───────────── Core: state, portions, deck, week, groceries ───────────── */
 const LS_KEY = 'peckish.proto.v1';
 const uid = () => Math.random().toString(36).slice(2, 9);
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -667,7 +664,7 @@ function freshState() {
       seen: { 'd-shrimp-tacos': wk, 'l-chicken-rice': wk, 'b-labneh': wk, 'd-bolognese': wk, 'l-fattoush': wk, 'b-oats': wk, 'd-stirfry': wk - 1, 'l-tawook': wk - 1, 'b-omelette': wk - 1, 'd-chicken-tray': wk - 2, 'l-kafta': wk - 2 },
       never: [], fav: [], eaten: { chicken: 7, beef: 5, eggs: 4, dairy: 4, shrimp: 3, fish: 1, plant: 1 }, weeks: [],
     },
-    custom: {}, groc: { checked: {}, missing: {}, extra: [] }, snacks: [], pip: [], hints: {},
+    custom: {}, groc: { checked: {}, missing: {}, extra: [] }, snacks: [], hints: {},
   };
 }
 function load() { try { const s = JSON.parse(localStorage.getItem(LS_KEY)); if (s && s.v === 1) return s; } catch (e) {} return freshState(); }
@@ -779,21 +776,16 @@ function eatenToday(s, who) {
 }
 
 /* ── Planning: favourites, proteins, curated decks, mutual match ── */
+const ratingAvg = (s, id) => { const v = Object.values(s.hist.ratings[id] || {}); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; };
 function keepCandidates(s) {
-  const sum = id => s.hist.ratings[id].omar + s.hist.ratings[id].ruba;
-  return Object.keys(s.hist.ratings).filter(id => { const r = s.hist.ratings[id]; return RECIPES[id] && r.omar >= 4 && r.ruba >= 4 && s.hist.seen[id] === s.weekN - 1 && !s.hist.never.includes(id); })
-    .sort((a, b) => sum(b) - sum(a)).slice(0, 3);
+  return Object.keys(s.hist.ratings).filter(id => RECIPES[id] && ratingAvg(s, id) >= 4 && s.hist.seen[id] === s.weekN - 1 && !s.hist.never.includes(id))
+    .sort((a, b) => ratingAvg(s, b) - ratingAvg(s, a)).slice(0, 3);
 }
 const leastEaten = s => PROTEINS.map(p => p.id).sort((a, b) => (s.hist.eaten[a] || 0) - (s.hist.eaten[b] || 0)).slice(0, 2);
-function partnerLikes(rid, s) {
-  const p = other(s.me), rt = (s.hist.ratings[rid] || {})[p];
-  if (rt >= 4) return true; if (rt && rt <= 2) return false;
-  return hash(rid + ':' + s.weekN + ':' + p) % 100 < 72;
-}
 function rotationNote(rid, s) { const seen = s.hist.seen[rid]; if (!seen) return 'New to you'; const gap = s.weekN - seen; return gap <= 1 ? 'Had last week' : 'Not had in ' + gap + ' weeks'; }
 function recipeProteins(r) { return r.alts ? r.alts.map(a => (ING[a].grp === 'shrimp' ? 'shrimp' : 'fish')) : [r.p]; }
 function buildDeck(m, s, proteins, exclude) {
-  const avg = r => { const rt = s.hist.ratings[r.id]; return rt ? ((rt.omar || 3) + (rt.ruba || 3)) / 2 : 3.5; };
+  const avg = r => { const a = ratingAvg(s, r.id); return a === null ? 3.5 : a; };
   const score = r => { const seen = s.hist.seen[r.id], gap = seen ? Math.min(6, s.weekN - seen) : 7; return gap * 2 + avg(r) + (hash(r.id + s.weekN) % 10) / 10; };
   const pool = Object.values(RECIPES).filter(r => r.m === m && !s.hist.never.includes(r.id) && !exclude.includes(r.id) && avg(r) > 2.5).sort((a, b) => score(b) - score(a));
   const hit = r => recipeProteins(r).some(p => proteins.includes(p));
@@ -805,7 +797,7 @@ function buildDeck(m, s, proteins, exclude) {
 function startPlanning() {
   mut(s => {
     const keep = keepCandidates(s), k = {}; keep.forEach(id => { k[id] = true; });
-    s.planning = { step: keep.length ? 'keep' : 'proteins', ms: 0, keep: k, proteins: [], sess: 0, idx: 0, decks: null, picks: [], nudged: false };
+    s.planning = { step: keep.length ? 'keep' : 'proteins', ms: 0, keep: k, proteins: [], sess: 0, idx: 0, decks: null, picks: [] };
     s.nudge = { snooze: 0, skipped: false };
   });
 }
@@ -818,13 +810,13 @@ function setProteins(list) {
 }
 function swipe(rid, yes, qty, choice) {
   return mut(s => {
-    const p = s.planning, m = MAINS[p.sess]; let res = 'skip';
-    if (yes) { res = partnerLikes(rid, s) ? 'match' : 'wait'; p.picks.push({ r: rid, m, qty: qty || 1, c: choice || null, st: res }); }
+    const p = s.planning, m = MAINS[p.sess];
+    if (yes) p.picks.push({ r: rid, m, qty: qty || 1, c: choice || null });
     p.idx++;
-    return res;
+    return yes ? 'in' : 'skip';
   });
 }
-function addBuilt(recipe, m) { mut(s => { s.custom[recipe.id] = recipe; if (s.planning) s.planning.picks.push({ r: recipe.id, m, qty: 1, c: null, st: 'match', built: true }); }); }
+function addBuilt(recipe, m) { mut(s => { s.custom[recipe.id] = recipe; if (s.planning) s.planning.picks.push({ r: recipe.id, m, qty: 1, c: null, built: true }); }); }
 function nextSession() { mut(s => { const p = s.planning; p.sess++; p.idx = 0; if (p.sess > 2) assemble(s); }); }
 function assemble(s) {
   const p = s.planning, slots = {};
@@ -833,13 +825,13 @@ function assemble(s) {
   MAINS.forEach(m => {
     const uniq = [], want = {};
     const add = (x, n) => { if (!want[x.r]) { want[x.r] = 0; uniq.push(x); } want[x.r] += n; };
-    Object.keys(p.keep).forEach(id => { if (p.keep[id] && RECIPES[id].m === m) add({ r: id, c: defChoice(RECIPES[id], s), via: 'keep', why: 'Kept from last week. You both rated it 4 or more.' }, 1); });
-    p.picks.filter(x => x.m === m && x.st === 'match').forEach(x => add({ r: x.r, c: x.c, via: 'match', why: x.built ? 'Built from scratch on Friday.' : 'You both said yes.' }, x.qty));
-    if (!uniq.length) (p.decks ? p.decks[m] : buildDeck(m, s, p.proteins, [])).slice(0, 3).forEach(id => add({ r: id, c: defChoice(RECIPES[id], s), via: 'pip', why: 'Pip picked this. There were no ' + MEAL[m].toLowerCase() + ' matches yet.' }, 1));
+    Object.keys(p.keep).forEach(id => { if (p.keep[id] && RECIPES[id].m === m) add({ r: id, c: defChoice(RECIPES[id], s), via: 'keep', why: 'Kept from last week. Rated 4 or more.' }, 1); });
+    p.picks.filter(x => x.m === m).forEach(x => add({ r: x.r, c: x.c, via: 'pick', why: x.built ? 'Built from scratch on Friday.' : 'Picked on Friday.' }, x.qty));
+    if (!uniq.length) (p.decks ? p.decks[m] : buildDeck(m, s, p.proteins, [])).slice(0, 3).forEach(id => add({ r: id, c: defChoice(RECIPES[id], s), via: 'auto', why: 'Picked for you. Nothing was chosen for ' + MEAL[m].toLowerCase() + ' yet.' }, 1));
     const seq = []; let any = true, last = -1;
     while (seq.length < 7 && any) { any = false; uniq.forEach((u, i) => { if (want[u.r] > 0 && seq.length < 7) { seq.push(u); want[u.r]--; any = true; last = i; } }); }
     let j = last + 1;
-    while (seq.length < 7) { seq.push(Object.assign({}, uniq[j % uniq.length], { via: 'pip', why: 'Pip repeated a meal you both chose, to fill the week.' })); j++; }
+    while (seq.length < 7) { seq.push(Object.assign({}, uniq[j % uniq.length], { via: 'auto', why: 'Repeated from your picks, to fill the week.' })); j++; }
     if (m !== 'b') crunch.forEach(d => {
       let best = -1;
       seq.forEach((x, i) => { if (!crunch.includes(i) && quickness(x) < quickness(seq[d]) && quickness(x) <= 20 && (best < 0 || quickness(x) < quickness(seq[best]))) best = i; });
@@ -848,18 +840,10 @@ function assemble(s) {
     seq.forEach((x, d) => { slots[d + m] = { k: uid(), r: x.r, c: x.c || null, done: false, via: x.via, why: x.why }; });
   });
   const snacks = Object.values(RECIPES).filter(r => r.m === 's' && !s.hist.never.includes(r.id)).sort((a, b) => (hash(a.id + s.weekN) % 97) - (hash(b.id + s.weekN) % 97));
-  for (let d = 0; d < 7; d++) slots[d + 's'] = { k: uid(), r: snacks[d % snacks.length].id, c: null, done: false, via: 'pip', why: "From the dietitian's snack list." };
+  for (let d = 0; d < 7; d++) slots[d + 's'] = { k: uid(), r: snacks[d % snacks.length].id, c: null, done: false, via: 'auto', why: "From the dietitian's snack list." };
   s.week = { n: s.weekN, status: 'review', slots, day: 0, startDow: s.house.startDow, secs: Math.max(1, Math.round(p.ms / 1000)), shop: null, stocked: false, swaps: 0, rough: {}, rheaOwn: {}, subs: {}, proteins: p.proteins };
   s.groc = { checked: {}, missing: {}, extra: [] };
   p.step = 'review';
-}
-function resolveWaiting() {
-  return mut(s => {
-    const p = s.planning; let yes = 0;
-    p.picks.forEach(x => { if (x.st === 'wait') { if (hash(x.r + 'n' + s.weekN) % 100 < 65) { x.st = 'match'; yes++; } else x.st = 'no'; } });
-    p.nudged = true; const ms = s.week.secs; assemble(s); s.week.secs = ms;
-    return yes;
-  });
 }
 function confirmPlan(shop) {
   mut(s => {
@@ -886,13 +870,13 @@ function fillPlan(s) {
     const packed = s.house.crunch.includes((w.startDow + d) % 7);
     let cands = Object.values(RECIPES).filter(r => r.m === m && !s.hist.never.includes(r.id));
     const score = r => {
-      const c = count(r.id), seen = s.hist.seen[r.id], rt = s.hist.ratings[r.id];
-      return (c > 0 && c < 3 ? 6 : 0) - c * 2 - (near.includes(r.id) ? 5 : 0) + (rt ? (rt.omar + rt.ruba) / 2 - 3 : 0) + (seen ? Math.min(4, w.n - seen) * .4 : 1.6) + (packed && r.t <= 15 ? 3 : 0) + (hash(r.id + key) % 10) / 20;
+      const c = count(r.id), seen = s.hist.seen[r.id], rt = ratingAvg(s, r.id);
+      return (c > 0 && c < 3 ? 6 : 0) - c * 2 - (near.includes(r.id) ? 5 : 0) + (rt === null ? 0 : rt - 3) + (seen ? Math.min(4, w.n - seen) * .4 : 1.6) + (packed && r.t <= 15 ? 3 : 0) + (hash(r.id + key) % 10) / 20;
     };
     cands.sort((a, b) => score(b) - score(a));
     const r = cands[0]; if (!r) return;
-    const why = count(r.id) > 0 ? 'Pip filled this gap with a meal already on the list.' : packed && r.t <= 15 ? 'Pip filled this gap with a quick one, because ' + dayName(w, d, 1) + ' is usually packed.' : 'Pip filled this gap. ' + rotationNote(r.id, s) + '.';
-    const en = { k: uid(), r: r.id, c: defChoice(r, s), done: false, via: 'pip', why };
+    const why = count(r.id) > 0 ? 'Filled this gap with a meal already on the list.' : packed && r.t <= 15 ? 'Filled this gap with a quick one, because ' + dayName(w, d, 1) + ' is usually packed.' : 'Filled this gap. ' + rotationNote(r.id, s) + '.';
+    const en = { k: uid(), r: r.id, c: defChoice(r, s), done: false, via: 'auto', why };
     sim[key] = en; out.push([key, en]);
   });
   return out;
@@ -904,10 +888,9 @@ function undoDone(key) { mut(s => { const en = s.week.slots[key]; if (en) en.don
 function rateEntry(key, face, tags) {
   mut(s => {
     const en = s.week.slots[key]; if (!en || !en.r) return;
-    const me = s.me, pa = other(me);
+    const me = s.me;
     en.rate = en.rate || {}; en.rate[me] = { f: face, tags: tags || [] };
-    if (!en.rate[pa] || en.rate[pa].sim) en.rate[pa] = { f: clamp(face - (hash(en.r + 'p') % 3 === 0 ? 1 : 0), 1, 5), tags: [], sim: true };
-    s.hist.ratings[en.r] = Object.assign({}, s.hist.ratings[en.r], { [me]: face, [pa]: en.rate[pa].f });
+    s.hist.ratings[en.r] = Object.assign({}, s.hist.ratings[en.r], { [me]: face });
     const i = s.hist.never.indexOf(en.r);
     if ((tags || []).includes('Never again')) { if (i < 0) s.hist.never.push(en.r); } else if (i >= 0 && en.neverHere) s.hist.never.splice(i, 1);
     en.neverHere = (tags || []).includes('Never again');
@@ -933,8 +916,17 @@ function useFilling() {
     const w = s.week, ro = w.rough[w.day]; if (!ro) return;
     ro.state = 'used'; ro.used = true;
     const key = w.day + 's', cur = entryRecipe(w.slots[key], s);
-    if (!cur || cur.fill < 3) w.slots[key] = { k: uid(), r: 's-egg', c: null, done: false, via: 'pip', why: 'Planned for 4pm, because ' + PEOPLE[ro.who] + ' slept under ' + s.profiles[ro.who].sleepUnder + ' hours.' };
+    if (!cur || cur.fill < 3) w.slots[key] = { k: uid(), r: 's-egg', c: null, done: false, via: 'auto', why: 'Planned for 4pm, because ' + PEOPLE[ro.who] + ' slept under ' + s.profiles[ro.who].sleepUnder + ' hours.' };
     w.slots[key].at = '4pm';
+  });
+}
+function logSleep(who, hours) {
+  mut(s => {
+    const p = s.profiles[who], w = s.week; p.lastSleep = hours;
+    if (!w || w.status !== 'active') return;
+    const ro = w.rough[w.day];
+    if (hours < p.sleepUnder) { if (!ro || ro.who === who) w.rough[w.day] = Object.assign({ state: 'offer' }, ro, { who, hours }); }
+    else if (ro && ro.who === who && ro.state === 'offer') delete w.rough[w.day];
   });
 }
 function keepRough() { mut(s => { const ro = s.week.rough[s.week.day]; if (ro) ro.state = 'kept'; }); }
@@ -1009,32 +1001,7 @@ function logSnack(text, thumb) {
   return [lo, hi];
 }
 
-/* ── Pip: states things, offers one tap, always says why ── */
-function pipSay(who, text, actions) { mut(s => { s.pip.push({ id: uid(), who, text, actions: actions || [] }); if (s.pip.length > 24) s.pip = s.pip.slice(-24); }); }
-function pipReply(text, s) {
-  const t = text.toLowerCase(), w = s.week, active = w && w.status === 'active', up = active ? upcomingKey(w) : null, en = up ? w.slots[up] : null;
-  const A = (label, act, arg) => ({ label, act, arg });
-  if (/busy|packed|no time|crunch|meeting|back.to.back|quick/.test(t)) return en ? { text: 'Packed day. ' + entryName(en, s) + ' can be quicker, or move.', actions: [A('See the options', 'rescue', up)] } : { text: 'Nothing left to cook today.', actions: [] };
-  if (/rough|slept|sleep|tired|up all night|exhaust/.test(t)) return active ? { text: 'Rough night. Today can be more filling: a bigger breakfast and a snack planned for 4pm.', actions: [A('See the plan', 'rough')] } : { text: 'There is no week running yet. Plan one first.', actions: [A('Plan the week', 'plan')] };
-  if (/sweet|crav|choc|dessert|sugar/.test(t)) { const r = sweetOption(s); return { text: "Heard. From the dietitian's list: " + r.n.toLowerCase() + '.', actions: active ? [A('Add it as a snack', 'snack', r.id), A('Not now', 'none')] : [A('See it', 'view', r.id)] }; }
-  if (/eating out|eat out|restaurant|take.?out|order|deliver/.test(t)) return en ? { text: 'Ordering from our saved list counts as a planned swap.', actions: [A('Pick from our list', 'rescue', up)] } : { text: 'Nothing left to swap today.', actions: [] };
-  if (/left.?over/.test(t)) return en ? { text: 'Leftovers for ' + MEAL[up[1]].toLowerCase() + '.', actions: [A('Set leftovers', 'leftovers', up)] } : { text: 'Nothing left to cook today.', actions: [] };
-  if (/out of|can'?t find|don'?t have|no more|missing|ran out/.test(t)) {
-    const list = groceryList(s), hit = list.find(i => i.id && t.includes(i.n.toLowerCase().split(/[ ,]/)[0]));
-    return hit ? { text: 'No ' + hit.n.toLowerCase() + '. It is in ' + hit.uses.length + (hit.uses.length === 1 ? ' meal' : ' meals') + ' this week.', actions: [A('Find a swap', 'missing', hit.key)] } : { text: 'Which item? Flag it on the grocery list and I will find a swap.', actions: [A('Open groceries', 'tab', 'groceries')] };
-  }
-  if (/fill|sort|plan/.test(t)) return w ? { text: fillPlan(s).length ? 'There are gaps in the week. I can fill them.' : 'The week is full.', actions: fillPlan(s).length ? [A('Fill my week', 'fill')] : [A('See my week', 'tab', 'plan')] } : { text: "Next week's deck is ready. About five minutes.", actions: [A("Let's go", 'plan')] };
-  if (/rhea|baby/.test(t)) { const r = entryRecipe(en, s); return r && r.rhea ? { text: 'Rhea shares ' + entryName(en, s).toLowerCase() + '. ' + r.rhea[1] + '.', actions: [A('See the recipe', 'recipe', up)] } : { text: en ? "Rhea has her own meal for this one. Her menu is on the week view." : 'Nothing left to cook today.', actions: [A("See Rhea's menu", 'tab', 'plan')] }; }
-  if (/snack|ate|had |handful|log/.test(t)) {
-    const line = text.replace(/^(i |we )?(just )?(ate|had|log(ged)?|snack(ed)?( on)?)\s*(a |an |some )?/i, '').trim();
-    if (line.length > 2 && !/^snack$/i.test(line)) { const [lo, hi] = logSnack(line); return { text: 'Logged for ' + PEOPLE[s.me] + '. About ' + lo + ' to ' + hi + ' kcal (estimate).', actions: [] }; }
-    return { text: 'Snap it, add one line, done.', actions: [A('Log a snack', 'snap')] };
-  }
-  if (/what|next|dinner|lunch|breakfast|eat|cook/.test(t)) return en ? { text: 'Next is ' + entryName(en, s).toLowerCase() + (en.r ? ', ' + entryTime(en, s) + ' minutes.' : '.'), actions: en.r ? [A('Start cooking', 'cook', up)] : [] } : { text: active ? 'Today is done.' : "Next week's deck is ready.", actions: active ? [] : [A("Let's go", 'plan')] };
-  return { text: 'I can make a meal quicker, plan for a rough night, log a snack, or fill the week.', actions: [] };
-}
-
-/* ───────────── UI primitives (Peckish design system: Aura, Button, sheets, wheels) ───────────── */
+/* ───────────── UI primitives: dot-matrix numbers, food orbs, sheets, wheels ───────────── */
 const { useState, useEffect, useLayoutEffect, useRef, useMemo } = React;
 const hh = (type, props, ...kids) => { if (props && 'class' in props) { props.className = props.class; delete props.class; } return React.createElement(type, props, ...kids); };
 const html = htm.bind(hh);
@@ -1070,9 +1037,32 @@ const ICONS = {
 };
 const Icon = ({ n, s }) => html`<svg class="ic" width=${s || 20} height=${s || 20} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d=${ICONS[n]} /></svg>`;
 
-const Aura = ({ s, w, alive, chrome, tile, cls }) => html`<span class=${cx('pk-aura', alive && 'pk-aura--alive', chrome && 'pk-aura--chrome', tile && 'pk-aura--tile', cls)} style=${s ? { width: (w || s) + 'px', height: s + 'px' } : null} aria-hidden="true"></span>`;
-/* Food emoji stand in for the cut-out food photos that are not in the design system yet. */
+const Aura = ({ s, w, chrome, tile, cls }) => html`<span class=${cx('pk-aura', chrome && 'pk-aura--chrome', tile && 'pk-aura--tile', cls)} style=${s ? { width: (w || s) + 'px', height: s + 'px' } : null} aria-hidden="true"></span>`;
+/* Food emoji stand in for real food photography. */
 const Food = ({ e, s, cls }) => html`<span class=${cx('food', cls)} style=${{ fontSize: s + 'px' }} aria-hidden="true">${e}</span>`;
+
+/* Dot-matrix numerals: every key number in the app is drawn on a 5 by 7 grid of dots. */
+const GLYPH = {
+  0: '01110 10001 10011 10101 11001 10001 01110', 1: '00100 01100 00100 00100 00100 00100 01110', 2: '01110 10001 00001 00010 00100 01000 11111',
+  3: '11110 00001 00001 01110 00001 00001 11110', 4: '00010 00110 01010 10010 11111 00010 00010', 5: '11111 10000 11110 00001 00001 10001 01110',
+  6: '00110 01000 10000 11110 10001 10001 01110', 7: '11111 00001 00010 00100 01000 01000 01000', 8: '01110 10001 10001 01110 10001 10001 01110',
+  9: '01110 10001 10001 01111 00001 00010 01100', ':': '0 0 1 0 1 0 0', '.': '0 0 0 0 0 0 1', '/': '0001 0001 0010 0010 0100 1000 1000', ' ': '00 00 00 00 00 00 00',
+};
+function Dots({ v, h, cls }) {
+  const str = String(v), pts = []; let x = 0;
+  for (const ch of str) { const rows = (GLYPH[ch] || GLYPH[' ']).split(' '); rows.forEach((row, y) => { for (let c = 0; c < row.length; c++) if (row[c] === '1') pts.push((x + c) + ',' + y); }); x += rows[0].length + 1; }
+  const cols = Math.max(1, x - 1), rad = h >= 40 ? .39 : h >= 24 ? .43 : .48;
+  return html`<svg class=${cx('dots', cls)} width=${(cols * h) / 7} height=${h} viewBox=${'0 0 ' + cols + ' 7'} role="img" aria-label=${str}>${pts.map(pt => { const [cx0, cy0] = pt.split(','); return html`<circle key=${pt} cx=${+cx0 + .5} cy=${+cy0 + .5} r=${rad} fill="currentColor" />`; })}</svg>`;
+}
+/* Food orb: the meal sits on a soft sphere coloured by its protein, so a week of the same colour reads as a week of the same thing. */
+const hueOf = r => 'h-' + ((r && r.p) || 'none');
+const Orb = ({ r, e, hue, s, glow, done, cls, children }) => html`<span class=${cx('orb', hue || hueOf(r), done && 'is-done', cls)} style=${{ width: s + 'px', height: s + 'px' }}>
+  ${glow && html`<i class="orb-glow"></i>`}
+  <span class="orb-face">${r || e ? html`<${Food} e=${r ? r.e : e} s=${Math.round(s * .58)} />` : children}</span>
+  ${done && html`<i class="tick"><${Icon} n="check" s=${11} /></i>`}
+</span>`;
+const CLUSTER = [[0, 46, 100, 'd-shrimp-tacos'], [94, 4, 74, 'l-chicken-rice'], [158, 58, 128, 'd-salmon-tray'], [88, 128, 70, 'b-avo'], [270, 2, 62, 'l-lentil-soup'], [262, 150, 68, 'd-bolognese'], [16, 158, 50, 'b-yogurt']];
+const Cluster = () => html`<div class="cluster" aria-hidden="true">${CLUSTER.map(([x, y, sz, id], i) => html`<span key=${id} class="cl-it" style=${{ left: x + 'px', top: y + 'px', animationDelay: (-i * 1.7) + 's' }}><${Orb} r=${RECIPES[id]} s=${sz} glow=${sz > 90} /></span>`)}</div>`;
 const Thumb = ({ e, s, done, icon, cls }) => html`<span class=${cx('thumb', done && 'is-done', cls)} style=${{ width: (s || 48) + 'px', height: (s || 48) + 'px' }}>
   ${icon ? html`<${Icon} n=${icon} />` : html`<${Food} e=${e} s=${Math.round((s || 48) * .54)} />`}
   ${done && html`<i class="tick"><${Icon} n="check" s=${11} /></i>`}
@@ -1099,7 +1089,7 @@ const Row = ({ label, value, onClick, right, sub }) => html`<${onClick ? 'button
 const Ticks = ({ n, at }) => html`<div class="ticks" aria-hidden="true">${Array.from({ length: n }, (_, i) => html`<i key=${i} class=${i < at ? 'on' : ''}></i>`)}</div>`;
 const Stepper = ({ value, onChange, min, max, label }) => html`<div class="stepper" role="group" aria-label=${label}>
   <button type="button" class="pk-iconbtn" aria-label="Less" disabled=${value <= min} onClick=${() => onChange(value - 1)}><${Icon} n="minus" /></button>
-  <span class="v2-number-l stepper-n">${value}</span>
+  <span class="stepper-n"><${Dots} v=${value} h=${22} /></span>
   <button type="button" class="pk-iconbtn" aria-label="More" disabled=${value >= max} onClick=${() => onChange(value + 1)}><${Icon} n="plus" /></button>
 </div>`;
 
@@ -1124,8 +1114,8 @@ function Sheet({ ov, children, full, label, theme, cls }) {
     </div>
   </div>`;
 }
-const PipHead = ({ title, body, why, micro }) => html`<div class="col g12 pad">
-  <${Aura} s=${44} alive />
+const SheetHead = ({ icon, title, body, why, micro }) => html`<div class="col g12 pad">
+  ${icon && html`<span class="headicon"><${Icon} n=${icon} /></span>`}
   ${micro && html`<p class="v2-micro ink3">${micro}</p>`}
   <h2 class="v2-title">${title}</h2>
   ${body && html`<p class="v2-body ink2">${body}</p>`}
@@ -1223,7 +1213,7 @@ function Celebrate({ ov }) {
     <div class="cel-top"><span class="pk-aura cel-bloom" aria-hidden="true"></span><span class="pk-aura cel-aura" aria-hidden="true"></span></div>
     <div class="cel-body pad">
       <p class="v2-micro ink3 cel-meta">${micro}</p>
-      <p class="v2-number-xl cel-number">${n}</p>
+      <div class="cel-number"><${Dots} v=${n} h=${92} /></div>
       <p class="v2-title cel-line">${line}</p>
       <div class="cel-action"><${Btn} block onClick=${() => { close(ov.id); onDone && onDone(); }}>${button}<//></div>
     </div>
@@ -1241,7 +1231,7 @@ function ConfirmSheet({ ov }) {
 function WheelSheet({ ov }) {
   const p = ov.props, [v, setV] = useState(p.value);
   return html`<${Sheet} ov=${ov} label=${p.title}>
-    <div class="col g8 pad"><p class="v2-micro ink3">${p.micro}</p><p class="v2-display tnum">${p.fmt ? p.fmt(v) : nf(v)} <span class="v2-micro ink3">${p.unit}</span></p></div>
+    <div class="col g8 pad"><p class="v2-micro ink3">${p.micro}</p><p class="readout"><${Dots} v=${p.fmt ? p.fmt(v) : v} h=${38} /><span class="v2-micro ink3">${p.unit}</span></p></div>
     <${Dial} min=${p.min} max=${p.max} step=${p.step} value=${v} major=${p.major} fmt=${p.tick} label=${p.title} onChange=${x => { setV(x); p.onChange(x); }} />
     ${p.note && html`<p class="v2-caption ink2 pad">${p.note}</p>`}
     <div class="pad sheet-pad mt16"><${Btn} block onClick=${() => close(ov.id)}>Done<//></div>
@@ -1256,24 +1246,25 @@ function Toast() {
 }
 
 /* ───────────── Onboarding: two profiles, targets, the Friday time ───────────── */
+const Readout = ({ v, unit, h }) => html`<p class="readout pad"><${Dots} v=${v} h=${h || 30} /><span class="v2-micro ink3">${unit}</span></p>`;
 function ProfileFields({ who, kind }) {
   const s = useS(), p = s.profiles[who], set = (k, v) => mut(d => { d.profiles[who][k] = v; });
   const sp = splitOf(p);
   if (kind === 'body') return html`<div class="col g24">
-    <div class="col g4"><p class="v2-number-l tnum pad">${p.weight} <span class="v2-micro ink3">kg</span></p>
+    <div class="col g4"><${Readout} v=${p.weight} unit="kg" />
       <${Dial} min=${40} max=${140} step=${1} major=${10} value=${p.weight} label="Weight in kilograms" onChange=${v => set('weight', v)} /></div>
-    <div class="col g4"><p class="v2-number-l tnum pad">${p.height} <span class="v2-micro ink3">cm</span></p>
+    <div class="col g4"><${Readout} v=${p.height} unit="cm" />
       <${Dial} min=${140} max=${210} step=${1} major=${10} value=${p.height} label="Height in centimetres" onChange=${v => set('height', v)} /></div>
   </div>`;
   if (kind === 'act') return html`<${ArcPicker} options=${ACTIVITY} value=${p.activity} label="Activity level" onChange=${v => set('activity', v)} />`;
   if (kind === 'cal') return html`<div class="col g24">
-    <div class="col g4"><p class="v2-number-l tnum pad">${nf(p.current)} <span class="v2-micro ink3">kcal now</span></p>
+    <div class="col g4"><${Readout} v=${p.current} unit="kcal now" />
       <${Dial} min=${1200} max=${3600} step=${50} major=${10} value=${p.current} label="Calories eaten now" onChange=${v => set('current', v)} /></div>
-    <div class="col g4"><p class="v2-number-l tnum pad">${nf(p.target)} <span class="v2-micro ink3">kcal target</span></p>
+    <div class="col g4"><${Readout} v=${p.target} unit="kcal target" />
       <${Dial} min=${1200} max=${3600} step=${50} major=${10} value=${p.target} label="Calorie target" onChange=${v => set('target', v)} /></div>
   </div>`;
   return html`<div class="col g24">
-    <div class="col g4"><p class="v2-number-l tnum pad">${p.protein} <span class="v2-micro ink3">g protein a day</span></p>
+    <div class="col g4"><${Readout} v=${p.protein} unit="g protein a day" />
       <${Dial} min=${60} max=${220} step=${5} major=${10} value=${p.protein} label="Daily protein in grams" onChange=${v => set('protein', v)} /></div>
     <div class="col g12 pad">
       <p class="v2-micro ink3">Split across the day</p>
@@ -1296,14 +1287,14 @@ function Onboarding() {
   if (kind === 'intro') {
     cta = 'Set up';
     extra = html`<${Btn} kind="secondary" block onClick=${finish}>Use sample numbers<//>`;
-    body = html`<div class="col g24 pad"><${Aura} s=${168} alive />
+    body = html`<div class="col g24 pad"><${Cluster} />
       <h1 class="v2-display">Peckish? Your week's already sorted.</h1>
       <p class="v2-body ink2">Two minutes of setup. The numbers come from your dietitian, and each of you owns your own.</p></div>`;
   } else if (kind === 'who') {
     body = html`<div class="col g32 pad"><h1 class="v2-display">Who's holding this phone?</h1>
       <div class="row g24">${Object.keys(PEOPLE).map(p => html`<button type="button" key=${p} class=${cx('whopick', s.me === p && 'on')} aria-pressed=${s.me === p} onClick=${() => mut(d => { d.me = p; })}>
         <${Avatar} p=${p} s=${96} on=${s.me === p} /><span class="v2-headline">${PEOPLE[p]}</span></button>`)}</div>
-      <p class="v2-caption ink2">Both of you swipe. Only meals you both pick go into the week.</p></div>`;
+      <p class="v2-caption ink2">One of you plans. Every meal is portioned for both of you, and for Rhea.</p></div>`;
   } else if (kind === 'partner') {
     cta = 'Set up ' + PEOPLE[pa] + ' now';
     extra = html`<${Btn} kind="secondary" block onClick=${() => { setBoth(false); setI(steps.indexOf('partner') + 1); }}>${PEOPLE[pa]} sets these later<//>`;
@@ -1319,16 +1310,16 @@ function Onboarding() {
       <p class="v2-caption ink2">Rhea's paediatrician decides what and how much. Peckish only times her portion.</p></div>`;
   } else if (kind === 'friday') {
     cta = 'Finish';
-    body = html`<div class="col g24"><div class="col g12 pad"><p class="v2-micro ink3">Fridays</p><h1 class="v2-title">When do we plan the week?</h1>
-      <p class="v2-display tnum">${hhmm(s.house.friday)}</p></div>
-      <${Dial} min=${17 * 60} max=${23 * 60 + 30} step=${15} major=${4} fmt=${v => String(Math.floor(v / 60))} value=${s.house.friday} label="Friday planning time" onChange=${v => mut(d => { d.house.friday = v; })} />
-      <p class="v2-caption ink2 pad">After Rhea's bedtime works well. Pip nudges once, at this time.</p></div>`;
+    body = html`<div class="col g24"><div class="col g12 pad"><p class="v2-micro ink3">Fridays</p><h1 class="v2-title">When do we plan the week?</h1></div>
+      <div class="col g4"><${Readout} v=${hhmm(s.house.friday)} unit="" h=${44} />
+        <${Dial} min=${17 * 60} max=${23 * 60 + 30} step=${15} major=${4} fmt=${v => String(Math.floor(v / 60))} value=${s.house.friday} label="Friday planning time" onChange=${v => mut(d => { d.house.friday = v; })} /></div>
+      <p class="v2-caption ink2 pad">After Rhea's bedtime works well. One nudge, at this time.</p></div>`;
   } else {
     body = html`<div class="col g24"><div class="col g8 pad"><p class="v2-micro ink3 row g8"><${Dot} p=${who} />${PEOPLE[who]}</p><h1 class="v2-title">${FIELD_TITLE[kind]}</h1></div>
       <${ProfileFields} who=${who} kind=${kind} />
       ${kind === 'cal' && html`<p class="v2-caption ink2 pad">From your dietitian. Change them any time in Profile.</p>`}</div>`;
   }
-  return html`<div class="full onb">
+  return html`<div class="full onb grid-bg">
     <div class="topbar pad">
       ${i > 0 ? html`<${IconBtn} n="left" label="Back" onClick=${() => setI(i - 1)} />` : html`<span class="pk-iconbtn ghost"></span>`}
       <${Ticks} n=${steps.length} at=${i + 1} />
@@ -1342,7 +1333,7 @@ function Onboarding() {
   </div>`;
 }
 
-/* ───────────── Shell: tab bar and the Ask Pip bar ───────────── */
+/* ───────────── Shell: tab bar ───────────── */
 const TABS = [['home', 'Home', 'home'], ['plan', 'Plan', 'plan'], ['groceries', 'Groceries', 'bag'], ['profile', 'Profile', 'user']];
 function TabBar() {
   const u = useUI(), i = TABS.findIndex(t => t[0] === u.tab);
@@ -1350,16 +1341,6 @@ function TabBar() {
     <i class="tab-ind"></i>
     ${TABS.map(t => html`<button type="button" key=${t[0]} class="tab" aria-current=${u.tab === t[0] ? 'page' : null} onClick=${() => uiSet({ tab: t[0] })}><${Icon} n=${t[2]} /><span class="v2-micro">${t[1]}</span></button>`)}
   </nav>`;
-}
-const SPEECH = window.SpeechRecognition || window.webkitSpeechRecognition || null;
-function AskBar() {
-  const voice = SPEECH && !useS().hints.noVoice;
-  return html`<form class="pk-ask askbar" onSubmit=${e => { e.preventDefault(); open('pip'); }}>
-    <${Aura} cls="pk-ask__orb" alive />
-    <input class="pk-ask__input v2-body" id="ask-pip" type="text" readOnly placeholder="Ask Pip, or snap a snack" aria-label="Ask Pip" onClick=${() => open('pip')} onFocus=${e => e.target.blur()} />
-    <button type="button" class="pk-ask__camera" aria-label="Snap a photo of what you ate" onClick=${() => open('snap')}><${Icon} n="camera" s=${22} /></button>
-    <button type="button" class="pk-ask__mic" aria-label=${voice ? 'Talk to Pip' : 'Ask Pip'} onClick=${() => open('pip', { listen: !!voice })}><${Icon} n=${voice ? 'mic' : 'send'} /></button>
-  </form>`;
 }
 
 /* ───────────── Home: leads with the next meal ───────────── */
@@ -1369,9 +1350,9 @@ function PlanNudge({ s }) {
   let micro = 'Friday · ' + hhmm(s.house.friday), line = 'Next week, sorted in 5 min.', cta = "Let's go";
   if (resume) { micro = 'Week ' + s.weekN + ' · in progress'; line = 'Pick up where you left off.'; cta = 'Continue planning'; }
   else if (s.nudge.skipped) { micro = 'Week ' + s.weekN + ' · skipped'; line = 'Skipped. New week, clean slate.'; cta = 'Plan anyway'; }
-  else if (snoozed) { const d = new Date(s.nudge.snooze); micro = 'Friday'; line = "I'll nudge you at " + hhmm(d.getHours() * 60 + d.getMinutes()) + '.'; cta = 'Plan now'; }
+  else if (snoozed) { const d = new Date(s.nudge.snooze); micro = 'Friday'; line = 'Next nudge at ' + hhmm(d.getHours() * 60 + d.getMinutes()) + '.'; cta = 'Plan now'; }
   return html`<section class="col g20 nudge pk-enter">
-    <${Aura} s=${132} />
+    <${Cluster} />
     <p class="v2-micro ink2">${micro}</p>
     <h1 class="v2-display">${line}</h1>
     <${Btn} block onClick=${() => { if (!resume) startPlanning(); open('plan'); }}>${cta}<//>
@@ -1403,16 +1384,17 @@ function Home() {
     ${active && html`<div class="days sm grow" role="tablist" aria-label="Day of the week">${[0, 1, 2, 3, 4, 5, 6].map(d => html`<button type="button" key=${d} role="tab" aria-selected=${d === w.day} class=${cx('day v2-micro', d === w.day && 'on', dayOnPlan(w, d) && 'ok')} aria-label=${dayName(w, d, 1)} onClick=${() => mut(x => { x.week.day = d; })}>${dayName(w, d)[0]}</button>`)}</div>`}
     <${IconBtn} n="sliders" label="Prototype controls" onClick=${() => open('demo')} />
   </div>`;
-  if (!active) return html`<div class="screen"><div class="scroll pad body-tabs">${top}<${PlanNudge} s=${s} /></div><${AskBar} /></div>`;
+  if (!active) return html`<div class="screen"><div class="scroll pad body-tabs">${top}<${PlanNudge} s=${s} /></div></div>`;
 
   const key = upcomingKey(w), en = key ? w.slots[key] : null, r = entryRecipe(en, s);
   const dow = (w.startDow + w.day) % 7, ro = w.rough[w.day], rateKey = pendingRating(s);
-  let pip = null;
-  if (ro && ro.state === 'offer') pip = ['Rough night? Today can be more filling.', () => open('rough')];
-  else if (rateKey) pip = ['How was the ' + entryName(w.slots[rateKey], s).toLowerCase() + '?', () => open('rate', { k: rateKey })];
-  else if (!w.stocked) { const g = grocProgress(s); pip = [(w.shop === 'Order online' ? 'Order the groceries. ' : 'Shop ' + w.shop + '. ') + (g.total - g.done) + ' items to go.', () => uiSet({ tab: 'groceries' })]; }
-  else if (en && r && r.quick && !en.quick && s.house.crunch.includes(dow)) pip = [DOW_LONG[dow] + ' is usually packed. There is a ' + r.quick[1] + '-minute version.', () => open('rescue', { k: key, why: 'Because ' + DOW_LONG[dow] + ' is on your packed days.' })];
-  else if (ro && ro.used) pip = ['Today is built to keep ' + (ro.who === me ? 'you' : PEOPLE[ro.who]) + ' full.', () => open('rough')];
+  /* One suggestion at a time, each with its reason one tap away. */
+  let hint = null;
+  if (ro && ro.state === 'offer') hint = ['Rough night? Today can be more filling.', () => open('rough')];
+  else if (rateKey) hint = ['How was the ' + entryName(w.slots[rateKey], s).toLowerCase() + '?', () => open('rate', { k: rateKey })];
+  else if (!w.stocked) { const g = grocProgress(s); hint = [(w.shop === 'Order online' ? 'Order the groceries. ' : 'Shop ' + w.shop + '. ') + (g.total - g.done) + ' items to go.', () => uiSet({ tab: 'groceries' })]; }
+  else if (en && r && r.quick && !en.quick && s.house.crunch.includes(dow)) hint = [DOW_LONG[dow] + ' is usually packed. There is a ' + r.quick[1] + '-minute version.', () => open('rescue', { k: key, why: 'Because ' + DOW_LONG[dow] + ' is on your packed days.' })];
+  else if (ro && ro.used) hint = ['Today is built to keep ' + (ro.who === me ? 'you' : PEOPLE[ro.who]) + ' full.', () => open('rough')];
 
   const rest = SLOTS.map(m => w.day + m).filter(k => k !== key && w.slots[k]);
   let hero;
@@ -1421,10 +1403,14 @@ function Home() {
     hero = html`<section class="hero col g16 pk-enter" key=${en.k + (en.quick ? 'q' : '')}>
       <div class="hero-top">
         <p class="v2-micro ink2">${MEAL[key[1]]}${r ? ' · ' + entryTime(en, s) + ' min' : ''}${en.quick ? ' · quicker version' : ''}</p>
-        <button type="button" class="hero-food" aria-label=${'Open ' + entryName(en, s)} onClick=${() => (r ? open('recipe', { k: key }) : open('slot', { k: key }))}><${Food} e=${r ? r.e : '🍽️'} s=${128} /></button>
+        <button type="button" class="hero-food" aria-label=${'Open ' + entryName(en, s)} onClick=${() => (r ? open('recipe', { k: key }) : open('slot', { k: key }))}>
+          ${r ? html`<${Orb} r=${r} s=${156} glow />` : html`<${Orb} s=${156}><${Icon} n="fork" s=${44} /><//>`}</button>
       </div>
       <h1 class="v2-display hero-name">${entryName(en, s)}</h1>
-      ${r && html`<p class="v2-number ink2 row g12 wrap tnum"><span class="row g8"><${Dot} p="ruba" />Ruba ${nf(pr.kcal)} kcal</span><span class="row g8"><${Dot} p="omar" />Omar ${nf(po.kcal)} kcal</span></p>`}
+      ${r && html`<p class="row g16 wrap">
+        <span class="row g8"><${Dot} p="ruba" /><span class="v2-label">Ruba</span><${Dots} v=${pr.kcal} h=${18} /></span>
+        <span class="row g8"><${Dot} p="omar" /><span class="v2-label">Omar</span><${Dots} v=${po.kcal} h=${18} /></span>
+        <span class="v2-micro ink3">kcal</span></p>`}
       <${Btn} block onClick=${() => (r ? open('cook', { k: key }) : markDone(key))}>${r ? 'Start cooking' : 'Mark as done'}<//>
       ${r && html`<div class="row g8 wrap">
         <${Btn} kind="secondary" size="sm" onClick=${() => open('rescue', { k: key })}>Busy day<//>
@@ -1435,20 +1421,21 @@ function Home() {
     const last = w.day >= 6, tk = !last && MAINS.map(m => (w.day + 1) + m).find(k => w.slots[k]), ten = tk ? w.slots[tk] : null, tr = entryRecipe(ten, s);
     hero = html`<section class="hero col g16 pk-enter" key=${'done' + w.day}>
       <div class="hero-top"><p class="v2-micro ink2">${dayName(w, w.day, 1)} · done</p>
-        <span class="hero-food">${tr ? html`<${Food} e=${tr.e} s=${128} />` : html`<${Aura} s=${116} />`}</span></div>
+        <span class="hero-food">${tr ? html`<${Orb} r=${tr} s=${156} glow />` : html`<${Aura} s=${140} />`}</span></div>
       <h1 class="v2-display hero-name">${last ? "That's the week." : ten ? 'Tomorrow, ' + entryName(ten, s).toLowerCase() + '.' : 'Nothing planned tomorrow.'}</h1>
       <${Btn} block onClick=${() => (last ? openClose() : mut(d => { d.week.day++; }))}>${last ? 'Close the week' : 'Go to ' + dayName(w, w.day + 1, 1)}<//>
     </section>`;
   }
   return html`<div class="screen"><div class="scroll pad body-tabs col g20">
     ${top}
-    ${pip && html`<button type="button" class="pipline" onClick=${pip[1]}><i class="mint"></i><span class="v2-body grow">${pip[0]}</span><span class="ink3"><${Icon} n="right" s=${16} /></span></button>`}
+    ${hint && html`<button type="button" class="hint" onClick=${hint[1]}><i class="mint"></i><span class="v2-body grow">${hint[0]}</span><span class="ink3"><${Icon} n="right" s=${16} /></span></button>`}
     ${hero}
     ${rest.length > 0 && html`<div class="rest">${rest.map(k => { const e2 = w.slots[k], r2 = entryRecipe(e2, s); return html`<button type="button" key=${k} class="rest-item" onClick=${() => (r2 ? open('recipe', { k }) : open('slot', { k }))}>
-      <${Thumb} e=${r2 ? r2.e : null} icon=${r2 ? null : 'fork'} s=${52} done=${e2.done} />
+      ${r2 ? html`<${Orb} r=${r2} s=${52} done=${e2.done} />` : html`<${Orb} s=${52} done=${e2.done}><${Icon} n="fork" /><//>`}
       <span class="v2-micro ink3">${e2.at || MEAL[k[1]]}</span><span class="v2-label clamp2">${entryName(e2, s, 1)}</span></button>`; })}</div>`}
     <div class="col g16"><${MacroBar} s=${s} who=${me} /><${MacroBar} s=${s} who=${other(me)} /></div>
-  </div><${AskBar} /></div>`;
+    <div class="row"><${Btn} kind="secondary" size="sm" onClick=${() => open('snap')}>Log a snack<//></div>
+  </div></div>`;
 }
 function openClose() {
   const s = store.s, sum = weekSummary(s), good = sum.on >= 3;
@@ -1487,7 +1474,7 @@ function WeekBoard({ s, rhea }) {
       const phone = document.getElementById('phone'), pr = phone.getBoundingClientRect(), cr = el.getBoundingClientRect();
       ghost = el.cloneNode(true); ghost.classList.add('ghost'); ghost.removeAttribute('data-slot');
       ghost.style.width = cr.width / FIT + 'px'; ghost.style.left = (cr.left - pr.left) / FIT + 'px'; ghost.style.top = (cr.top - pr.top) / FIT + 'px';
-      ghost.style.transform = 'scale(1.12)';
+      ghost.style.transform = 'scale(1.18)';
       phone.appendChild(ghost); el.classList.add('lifted');
       rects = Array.from(ref.current.querySelectorAll('[data-slot]')).map(n => [n, n.getBoundingClientRect()]);
     }, 380) : 0;
@@ -1496,7 +1483,7 @@ function WeekBoard({ s, rhea }) {
         if (!mode && (Math.abs(dx) > 10 || Math.abs(dy) > 10)) { clearTimeout(lp); gest.current = true; mode = can && Math.abs(dx) > Math.abs(dy) && dx < 0 ? 'swipe' : 'scroll'; }
         if (mode === 'swipe') { el.style.transition = 'none'; el.style.transform = 'translateX(' + Math.min(0, dx) + 'px)'; el.style.opacity = String(1 - Math.min(.7, -dx / 110)); }
         if (mode === 'drag') {
-          ghost.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(1.12)';
+          ghost.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(1.18)';
           const hit = rects.find(([n, r]) => ev.clientX >= r.left && ev.clientX <= r.right && ev.clientY >= r.top && ev.clientY <= r.bottom);
           const t = hit ? hit[0] : null;
           if (t !== target) { if (target) target.classList.remove('drop'); target = t; if (target && target !== el) target.classList.add('drop'); }
@@ -1516,20 +1503,21 @@ function WeekBoard({ s, rhea }) {
       },
     });
   };
+  const plus = html`<span class="orb-empty"><${Icon} n="plus" s=${16} /></span>`;
   const cell = (d, m) => {
     const key = d + m, en = w.slots[key], r = entryRecipe(en, s);
     let th, cap, empty = !en;
     if (rhea) {
       const own = w.rheaOwn[key];
-      if (own) { th = html`<span class="ink2"><${Icon} n="baby" /></span>`; cap = own; empty = false; }
-      else if (r && r.rhea) { th = html`<${Food} e=${r.e} s=${26} /><i class="badge"><${Dot} p="rhea" /></i>`; cap = r.rhea[0] === 'easy' ? 'Same pot' : 'Partly'; }
-      else { th = html`<span class="ink3"><${Icon} n="plus" s=${16} /></span>`; cap = en ? 'Own meal' : ''; empty = true; }
+      if (own) { th = html`<${Orb} s=${44} hue="h-rhea"><${Icon} n="baby" /><//>`; cap = own; empty = false; }
+      else if (r && r.rhea) { th = html`<${Orb} r=${r} s=${44} /><i class="badge"><${Dot} p="rhea" /></i>`; cap = r.rhea[0] === 'easy' ? 'Same pot' : 'Partly'; }
+      else { th = plus; cap = en ? 'Own meal' : ''; empty = true; }
     } else if (en) {
-      th = html`${r ? html`<${Food} e=${r.e} s=${26} />` : html`<span class="ink2"><${Icon} n="fork" /></span>`}${en.done && html`<i class="tick"><${Icon} n="check" s=${11} /></i>`}`;
+      th = r ? html`<${Orb} r=${r} s=${44} done=${en.done} />` : html`<${Orb} s=${44} done=${en.done}><${Icon} n="fork" /><//>`;
       cap = entryName(en, s, 1);
-    } else { th = html`<span class="ink3"><${Icon} n="plus" s=${16} /></span>`; cap = ''; }
+    } else { th = plus; cap = ''; }
     return html`<div key=${key} data-slot=${key} role="button" tabIndex="0" aria-label=${dayName(w, d, 1) + ' ' + MEAL[m] + ': ' + (cap || 'empty')}
-      class=${cx('cell', empty && 'empty', en && en.done && !rhea && 'is-done')} onPointerDown=${e => down(e, key)} onClick=${() => { if (gest.current) gest.current = false; else tap(key); }} onKeyDown=${e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tap(key); } }}>
+      class=${cx('cell', empty && 'empty')} onPointerDown=${e => down(e, key)} onClick=${() => { if (gest.current) gest.current = false; else tap(key); }} onKeyDown=${e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tap(key); } }}>
       <span class="cell-th pk-enter" key=${(en ? en.k : 'e') + (rhea ? 'r' : '')}>${th}</span>
       <span class="v2-caption cell-n">${cap}</span>
     </div>`;
@@ -1548,47 +1536,40 @@ function CardFace({ r, s }) {
   const c = defChoice(r, s), fav = s.hist.fav.includes(r.id);
   return html`<div class="card-in">
     <div class="row">
-      <p class="v2-micro ink2 grow">${MEAL[r.m]} · ${r.t} min · ${r.dish}</p>
+      <p class="v2-micro grow">${MEAL[r.m]} · ${r.t} min · ${r.dish}</p>
       <button type="button" class=${cx('heart', fav && 'on')} aria-label="Favourite" aria-pressed=${fav} onPointerDown=${e => e.stopPropagation()}
         onClick=${e => { e.stopPropagation(); mut(d => { const i = d.hist.fav.indexOf(r.id); if (i < 0) d.hist.fav.push(r.id); else d.hist.fav.splice(i, 1); }); }}><${Icon} n="heart" /></button>
     </div>
-    <div class="card-food"><${Food} e=${r.e} s=${132} /></div>
+    <div class="card-food"><${Food} e=${r.e} s=${140} /></div>
     <div class="col g8">
-      <h2 class="v2-title">${r.n}</h2>
-      <p class="v2-caption ink2 why"><i class="mint"></i>${rotationNote(r.id, s)}</p>
+      <h2 class="v2-display card-name">${r.n}</h2>
+      <p class="v2-caption why"><i class="mint"></i>${rotationNote(r.id, s)}</p>
       <${Tags} r=${r} s=${s} />
     </div>
     <div class="col g4 card-por">
-      ${['ruba', 'omar'].map(who => { const x = portion(r, who, s, { choice: c }); return html`<div class="row g8" key=${who}><${Dot} p=${who} /><span class="v2-number tnum grow">${PEOPLE[who]} ${nf(x.kcal)} of ${nf(x.target)} kcal</span><span class="v2-number ink2 tnum">${x.pro} g protein</span></div>`; })}
+      ${['ruba', 'omar'].map(who => { const x = portion(r, who, s, { choice: c }); return html`<div class="row g8" key=${who}><${Dot} p=${who} /><span class="v2-number tnum grow">${PEOPLE[who]} ${nf(x.kcal)} of ${nf(x.target)} kcal</span><span class="v2-number tnum">${x.pro} g protein</span></div>`; })}
     </div>
     <span class="stamp stamp-yes v2-label">Yes</span><span class="stamp stamp-no v2-label">Not this week</span>
   </div>`;
 }
 function StepSwipe({ s, flush }) {
-  const p = s.planning, m = MAINS[p.sess], deck = p.decks[m], rid = deck[p.idx], done = p.idx >= deck.length, pa = other(s.me);
+  const p = s.planning, m = MAINS[p.sess], deck = p.decks[m], rid = deck[p.idx], done = p.idx >= deck.length;
   const topRef = useRef(null), busy = useRef(false), tapT = useRef(0), gest = useRef(false);
-  const [fx, setFx] = useState(null);
-  useEffect(() => { if (!done || (fx && fx.kind === 'match')) return; const t = setTimeout(() => { flush(); nextSession(); }, 800); return () => clearTimeout(t); }, [done, fx, p.sess]);
-  useEffect(() => {
-    if (!fx) return; const id = fx.id;
-    const t = setTimeout(() => (fx.kind === 'match' && !fx.out ? setFx(f => (f && f.id === id ? Object.assign({}, f, { out: true }) : f)) : setFx(f => (f && f.id === id ? null : f))), fx.out ? 200 : fx.kind === 'match' ? 1500 : 1700);
-    return () => clearTimeout(t);
-  }, [fx]);
+  useEffect(() => { if (!done) return; const t = setTimeout(() => { flush(); nextSession(); }, 800); return () => clearTimeout(t); }, [done, p.sess]);
   const stamp = dx => { const el = topRef.current; if (!el) return; const y = el.querySelector('.stamp-yes'), n = el.querySelector('.stamp-no'); if (y) y.style.opacity = clamp(dx / 90, 0, 1); if (n) n.style.opacity = clamp(-dx / 90, 0, 1); };
-  const settle = () => { const el = topRef.current; if (!el) return; el.style.transition = 'transform var(--duration-base) var(--ease-out)'; el.style.transform = ''; stamp(0); };
-  const commit = (yes, qty, choice, dx) => {
+  const settle = () => { const el = topRef.current; if (!el) return; el.style.transition = 'transform var(--duration-base) var(--ease-spring)'; el.style.transform = ''; stamp(0); };
+  const commit = (yes, qty, choice) => {
     if (busy.current || done) return; busy.current = true;
     if (!s.hints.deck) mut(d => { d.hints.deck = true; });
-    const el = topRef.current;
-    if (yes && partnerLikes(rid, store.s)) { setFx({ kind: 'match', rid, id: uid(), x: dx || 0, qty }); swipe(rid, true, qty, choice); buzz(14); busy.current = false; return; }
+    const el = topRef.current; if (yes) { stamp(120); buzz(10); }
     el.style.transition = 'transform var(--duration-fast) var(--ease-in), opacity var(--duration-fast) var(--ease-in)';
     el.style.transform = 'translate(' + (yes ? 460 : -460) + 'px,0) rotate(' + (yes ? 16 : -16) + 'deg)'; el.style.opacity = '0';
-    setTimeout(() => { const res = swipe(rid, yes, qty, choice); busy.current = false; if (res === 'wait') setFx({ kind: 'wait', id: uid() }); }, 200);
+    setTimeout(() => { swipe(rid, yes, qty, choice); busy.current = false; }, 200);
   };
-  const decide = (yes, qty, dx) => {
+  const decide = (yes, qty) => {
     const r = RECIPES[rid];
-    if (yes && (r.alts || r.bread)) { settle(); open('choice', { rid, onPick: c => commit(true, qty, c, 0) }); return; }
-    commit(yes, qty, null, dx);
+    if (yes && (r.alts || r.bread)) { settle(); open('choice', { rid, onPick: c => commit(true, qty, c) }); return; }
+    commit(yes, qty, null);
   };
   const never = () => {
     const r = RECIPES[rid], el = topRef.current; busy.current = true; buzz(20);
@@ -1607,7 +1588,7 @@ function StepSwipe({ s, flush }) {
         clearTimeout(lp); if (long) return;
         if (cancelled) return settle();
         if (!moved) return;
-        if (dx > 96 || vx > .55) decide(true, 1, dx); else if (dx < -96 || vx < -.55) decide(false, 1, dx); else settle();
+        if (dx > 96 || vx > .55) decide(true, 1); else if (dx < -96 || vx < -.55) decide(false, 1); else settle();
       },
     });
   };
@@ -1615,40 +1596,29 @@ function StepSwipe({ s, flush }) {
   const click = () => {
     if (gest.current) { gest.current = false; return; }
     if (busy.current || done) return;
-    if (tapT.current) { clearTimeout(tapT.current); tapT.current = 0; decide(true, 2, 0); }
-    else tapT.current = setTimeout(() => { tapT.current = 0; open('recipe', { rid, onAdd: (q, c) => commit(true, q, c, 0) }); }, 260);
+    if (tapT.current) { clearTimeout(tapT.current); tapT.current = 0; decide(true, 2); }
+    else tapT.current = setTimeout(() => { tapT.current = 0; open('recipe', { rid, onAdd: (q, c) => commit(true, q, c) }); }, 260);
   };
-  const picks = p.picks.filter(x => x.m === m), fr = fx && fx.kind === 'match' ? getRecipe(fx.rid, s) : null;
+  const picks = p.picks.filter(x => x.m === m);
   return html`<div class="flow-body col g12">
     <div class="pad col g8">
       <h1 class="v2-title">${MEAL[m]} <span class="ink3">${Math.min(p.idx + 1, deck.length)} of ${deck.length}</span></h1>
       <${Ticks} n=${deck.length} at=${p.idx} />
       <div class="tray row g8">
         ${picks.length === 0 && html`<span class="v2-caption ink2">${s.hints.deck ? 'Nothing in yet.' : 'Right for yes, left for not this week. Double tap adds it twice. Hold to never see it again.'}</span>`}
-        ${picks.map((x, i) => { const r = getRecipe(x.r, s); return html`<span key=${i} class=${cx('trayitem pk-enter', x.st !== 'match' && 'wait')}><${Food} e=${r.e} s=${16} />${x.qty > 1 && html`<i class="v2-micro">×2</i>`}</span>`; })}
-        ${fx && fx.kind === 'wait' && html`<span class="v2-caption ink2 pk-enter" key=${fx.id}>Waiting on ${PEOPLE[pa]}.</span>`}
+        ${picks.map((x, i) => html`<span key=${i} class="trayitem pk-pop"><${Orb} r=${getRecipe(x.r, s)} s=${32} />${x.qty > 1 && html`<i class="v2-micro">×2</i>`}</span>`)}
       </div>
     </div>
     <div class="deck">
       ${done && html`<div class="deck-end col g8 pk-enter"><p class="v2-micro ink2">${MEAL[m]} · done</p><p class="v2-display">${p.sess < 2 ? MEAL[MAINS[p.sess + 1]] + ' next.' : 'Putting the week together.'}</p></div>`}
       ${!done && [2, 1, 0].map(o => { const id = deck[p.idx + o]; if (!id) return null; const r = RECIPES[id];
-        return html`<div key=${id} ref=${o === 0 ? topRef : null} class=${cx('card', 'c' + o)} onPointerDown=${o === 0 ? down : null} onClick=${o === 0 ? click : null}><${CardFace} r=${r} s=${s} /></div>`; })}
-      ${fr && html`<div key=${fx.id} class=${cx('flip', fx.out && 'out')} style=${{ '--fx-x': fx.x + 'px', '--fx-r': fx.x / 20 + 'deg' }} onClick=${() => setFx(null)}>
-        <div class="card face"><${CardFace} r=${fr} s=${s} /></div>
-        <div class="card face back"><div class="card-in col g16">
-          <${Aura} s=${88} />
-          <span class="grow"></span>
-          <p class="v2-micro ink2">${PEOPLE[pa]} said yes too</p>
-          <p class="v2-display">It's a match.</p>
-          <p class="v2-title">${fr.n} ${/s$/.test(fr.n) ? 'are' : 'is'} in${fx.qty > 1 ? ', twice' : ''}.</p>
-        </div></div>
-      </div>`}
+        return html`<div key=${id} ref=${o === 0 ? topRef : null} class=${cx('card', 'c' + o, hueOf(r))} onPointerDown=${o === 0 ? down : null} onClick=${o === 0 ? click : null}><${CardFace} r=${r} s=${s} /></div>`; })}
     </div>
     <div class="pad col g12 deck-actions">
       <div class="row g8">
-        <${Btn} kind="secondary" cls="grow" disabled=${done} onClick=${() => decide(false, 1, 0)}>Not this week<//>
-        <button type="button" class="pk-iconbtn x2 v2-label" aria-label="Add it twice" disabled=${done} onClick=${() => decide(true, 2, 0)}>×2</button>
-        <${Btn} cls="grow" disabled=${done} onClick=${() => decide(true, 1, 0)}>Yes<//>
+        <${Btn} kind="secondary" cls="grow" disabled=${done} onClick=${() => decide(false, 1)}>Not this week<//>
+        <button type="button" class="pk-iconbtn x2 v2-label" aria-label="Add it twice" disabled=${done} onClick=${() => decide(true, 2)}>×2</button>
+        <${Btn} cls="grow" disabled=${done} onClick=${() => decide(true, 1)}>Yes<//>
       </div>
       <div class="row g8"><${Btn} kind="secondary" size="sm" onClick=${() => open('build', { m, plan: true })}>Build a plate from scratch<//>
         <span class="grow"></span><${Btn} kind="secondary" size="sm" disabled=${done} onClick=${() => { flush(); mut(d => { d.planning.idx = d.planning.decks[m].length; }); }}>Skip ${MEAL[m].toLowerCase()}<//></div>
@@ -1663,14 +1633,13 @@ function PlanFlow({ ov }) {
   useEffect(() => { if (!p) close(ov.id); }, [!p]);
   if (!p) return html`<div class=${cx('full flow', ov.closing && 'out')}></div>`;
   const live = TIMED.includes(p.step), secs = live ? (p.ms + Date.now() - t0.current) / 1000 : s.week ? s.week.secs : p.ms / 1000;
-  const w = s.week, pa = other(s.me);
   let body;
   if (p.step === 'keep') {
     const ids = Object.keys(p.keep);
     body = html`<div class="flow-body pad col g24 scroll">
-      <div class="col g8"><p class="v2-micro ink2">From last week · both rated 4 or more</p><h1 class="v2-display">Keep these?</h1></div>
+      <div class="col g8"><p class="v2-micro ink2">From last week · rated 4 or more</p><h1 class="v2-display">Keep these?</h1></div>
       <div class="col">${ids.map(id => { const r = RECIPES[id]; return html`<button type="button" key=${id} class=${cx('keeprow', !p.keep[id] && 'off')} aria-pressed=${p.keep[id]} onClick=${() => mut(d => { d.planning.keep[id] = !d.planning.keep[id]; })}>
-        <${Food} e=${r.e} s=${44} /><span class="grow col g4"><span class="v2-micro ink3">${MEAL[r.m]} · ${r.t} min</span><span class="v2-title">${r.n}</span></span>
+        <${Orb} r=${r} s=${56} /><span class="grow col g4"><span class="v2-micro ink3">${MEAL[r.m]} · ${r.t} min</span><span class="v2-title">${r.n}</span></span>
         <i class=${cx('tickbox', p.keep[id] && 'on')}><${Icon} n="check" s=${14} /></i></button>`; })}</div>
       <p class="v2-caption ink2">Untick any to swap it out. New cards fill the gaps.</p>
     </div>
@@ -1679,33 +1648,40 @@ function PlanFlow({ ov }) {
   else if (p.step === 'swipe') body = html`<${StepSwipe} s=${s} flush=${flush} />`;
   else if (p.step === 'review') body = html`<${StepReview} s=${s} />`;
   else body = html`<${StepShop} s=${s} ov=${ov} />`;
-  return html`<div class=${cx('full flow', ov.closing && 'out')} role="dialog" aria-modal="true" aria-label="Plan the week">
+  return html`<div class=${cx('full flow grid-bg', ov.closing && 'out')} role="dialog" aria-modal="true" aria-label="Plan the week">
     <div class="topbar pad">
       <${IconBtn} n="x" label="Close planning. Progress is kept" onClick=${() => close(ov.id)} />
       <span class="v2-micro ink3">Week ${s.weekN}</span>
-      <span class="v2-number ink2 tnum timer" aria-label="Planning time">${mmss(secs)}</span>
+      <span class="timer"><${Dots} v=${mmss(secs)} h=${16} /></span>
     </div>
     ${body}
   </div>`;
 }
+/* Proteins sit in orbit around the count. Picking one draws its line in. */
 function StepProteins({ s, flush }) {
   const p = s.planning, [sel, setSel] = useState(p.proteins || []), least = leastEaten(s);
   const tog = id => setSel(x => (x.includes(id) ? x.filter(y => y !== id) : x.length >= 3 ? (buzz(20), x) : x.concat([id])));
-  return html`<div class="flow-body pad col g24 scroll">
+  const C = 165, RAD = 122, pos = PROTEINS.map((pr, i) => { const a = ((-90 + (i * 360) / PROTEINS.length) * Math.PI) / 180; return [C + RAD * Math.cos(a), C + RAD * Math.sin(a)]; });
+  return html`<div class="flow-body pad col g16 scroll">
     <div class="col g8"><p class="v2-micro ink2">Pick up to 3</p><h1 class="v2-display">In the mood for?</h1></div>
-    <div class="cluster">${[[0, 1], [2, 3, 4], [5, 6]].map((row, ri) => html`<div class="cluster-row" key=${ri}>${row.map(i => { const pr = PROTEINS[i], on = sel.includes(pr.id);
-      return html`<button type="button" key=${pr.id} class=${cx('pchip', on && 'on', !on && sel.length >= 3 && 'dim')} aria-pressed=${on} onClick=${() => tog(pr.id)}>
-        <span class="pchip-o"><${Food} e=${pr.e} s=${38} />${on && html`<i class="tick"><${Icon} n="check" s=${11} /></i>`}${least.includes(pr.id) && !on && html`<i class="mint pchip-mint"></i>`}</span>
-        <span class="v2-label">${pr.n}</span></button>`; })}</div>`)}</div>
+    <div class="orbit" role="group" aria-label="Proteins">
+      <svg class="orbit-lines" viewBox="0 0 330 330" aria-hidden="true">
+        <circle class="orbit-ring" cx=${C} cy=${C} r=${RAD} />
+        ${PROTEINS.map((pr, i) => html`<line key=${pr.id} class=${cx('orbit-line', sel.includes(pr.id) && 'on')} x1=${C} y1=${C} x2=${pos[i][0]} y2=${pos[i][1]} />`)}
+      </svg>
+      <span class="orbit-core"><${Dots} v=${sel.length + '/3'} h=${24} /></span>
+      ${PROTEINS.map((pr, i) => { const on = sel.includes(pr.id);
+        return html`<button type="button" key=${pr.id} class=${cx('pchip', on && 'on', !on && sel.length >= 3 && 'dim')} style=${{ left: pos[i][0] + 'px', top: pos[i][1] + 'px' }} aria-pressed=${on} onClick=${() => tog(pr.id)}>
+          <span class="pchip-o"><${Orb} e=${pr.e} hue=${'h-' + pr.id} s=${66} done=${on} />${least.includes(pr.id) && !on && html`<i class="mint pchip-mint"></i>`}</span>
+          <span class="v2-label">${pr.n}</span></button>`; })}
+    </div>
     <p class="v2-caption ink2 why"><i class="mint"></i>${least.map(id => PROTEINS.find(x => x.id === id).n).join(' and ')} have been off the table most of this month.</p>
   </div>
   <div class="foot pad"><${Btn} block disabled=${!sel.length} onClick=${() => { flush(); setProteins(sel); }}>${sel.length ? 'Start swiping' : 'Pick up to 3'}<//></div>`;
 }
 function StepReview({ s }) {
-  const p = s.planning, w = s.week, pa = other(s.me), waiting = p.picks.filter(x => x.st === 'wait');
-  const [nudging, setNudging] = useState(false), [moving, setMoving] = useState(false);
+  const w = s.week, [moving, setMoving] = useState(false);
   const tm = w.secs < 60 ? w.secs + ' sec' : Math.floor(w.secs / 60) + ' min' + (w.secs % 60 ? ' ' + (w.secs % 60) + ' sec' : '');
-  const nudge = () => { setNudging(true); setTimeout(() => { const n = resolveWaiting(); setNudging(false); toast(n ? PEOPLE[pa] + ' said yes to ' + n + '. The week is updated.' : PEOPLE[pa] + ' passed on those.'); }, 2000); };
   return html`<div class="flow-body col g12 scroll">
     <div class="pad col g8 pk-enter">
       ${moving ? html`<p class="v2-body ink2">Hold a meal and drag it to move or swap. Swipe it left to remove it. Tap an empty slot to type your own.</p>`
@@ -1713,8 +1689,6 @@ function StepReview({ s }) {
           <div class="row"><${Btn} kind="secondary" size="sm" onClick=${() => setMoving(true)}>Move things around<//></div>`}
     </div>
     <${WeekBoard} s=${s} />
-    ${(waiting.length > 0 || nudging) && html`<div class="pad row g12"><span class="v2-caption ink2 grow">${nudging ? 'Asked ' + PEOPLE[pa] + '. One reminder, never more.' : waiting.length + ' waiting on ' + PEOPLE[pa] + '.'}</span>
-      ${!nudging && !p.nudged && html`<${Btn} kind="secondary" size="sm" onClick=${nudge}>Nudge once<//>`}</div>`}
   </div>
   <div class="foot pad"><${Btn} block onClick=${() => mut(d => { d.planning.step = 'shop'; })}>Looks good<//></div>`;
 }
@@ -1737,7 +1711,7 @@ function StepShop({ s, ov }) {
 /* ───────────── Plan tab ───────────── */
 function PlanTab() {
   const s = useS(), w = s.week;
-  if (!w || w.status !== 'active') return html`<div class="screen"><div class="scroll pad body-tabs"><div class="topbar"></div><${PlanNudge} s=${s} /></div><${AskBar} /></div>`;
+  if (!w || w.status !== 'active') return html`<div class="screen"><div class="scroll pad body-tabs"><div class="topbar"></div><${PlanNudge} s=${s} /></div></div>`;
   return html`<${PlanBoard} s=${s} />`;
 }
 function PlanBoard({ s }) {
@@ -1749,14 +1723,16 @@ function PlanBoard({ s }) {
         <button type="button" class="v2-micro ink2 linkish" onClick=${pickStartDay}>Week ${w.n} · starts ${DOW[w.startDow]} <${Icon} n="down" s=${12} /></button>
         <${IconBtn} n="refresh" label="Plan this week again" onClick=${() => open('confirm', { title: 'Plan this week again?', body: 'The current week is replaced once the new one is confirmed.', yes: 'Plan again', onYes: () => { startPlanning(); open('plan'); } })} />
       </div>
-      <h1 class="v2-title">${showRhea ? "Rhea's menu" : w.swaps ? swapLine(w.swaps) : 'The week, sorted.'}</h1>
+      <h1 class="v2-display">${showRhea ? "Rhea's menu" : 'The week'}</h1>
+      ${w.swaps > 0 && !showRhea && html`<p class="v2-caption ink2">${swapLine(w.swaps)}</p>`}
       ${s.house.rhea && html`<${Seg} options=${[['week', 'Week plan'], ['rhea', "Rhea's menu"]]} value=${showRhea ? 'rhea' : 'week'} label="Board view" onChange=${v => setRhea(v === 'rhea')} />`}
-      ${gaps > 0 && !showRhea && html`<button type="button" class="pipline" onClick=${runFill}><i class="mint"></i><span class="v2-body grow">Fill my week. ${gaps} ${gaps === 1 ? 'gap' : 'gaps'}.</span><span class="ink3"><${Icon} n="right" s=${16} /></span></button>`}
+      ${gaps > 0 && !showRhea && html`<button type="button" class="hint" onClick=${runFill}><i class="mint"></i><span class="v2-body grow">Fill my week. ${gaps} ${gaps === 1 ? 'gap' : 'gaps'}.</span><span class="ink3"><${Icon} n="right" s=${16} /></span></button>`}
     </div>
     <${WeekBoard} s=${s} rhea=${showRhea} />
-    <p class="v2-caption ink2 pad">${showRhea ? 'Same pot means her portion comes out of ours before salt, spices or sauce. Tap any slot to see how, or to type her own meal.' : 'Hold and drag to move or swap. Swipe left to remove. Tap an empty slot to type your own.'}</p>
-  </div><${AskBar} /></div>`;
+    <p class="v2-caption ink2 pad">${showRhea ? 'Same pot means her portion comes out of ours before salt, spices or sauce. Tap any slot to see how, or to type her own meal.' : 'Hold and drag to move or swap. Swipe left to remove. Tap an empty slot to type your own. The colour is the protein.'}</p>
+  </div></div>`;
 }
+
 /* ───────────── Slot editor, choices, Rhea's note ───────────── */
 function SlotSheet({ ov }) {
   const s = useS(), key = ov.props.k, w = s.week, en = w ? w.slots[key] : null, d = +key[0], m = key[1];
@@ -1770,11 +1746,11 @@ function SlotSheet({ ov }) {
       <div class="col g4"><p class="v2-micro ink3">${dayName(w, d, 1)} · ${MEAL[m]}</p><h2 class="v2-title">${en ? entryName(en, s) : 'What are we having?'}</h2></div>
       <form class="row g8" onSubmit=${e => { e.preventDefault(); save(text); }}>
         <input id="slot-text" class="field v2-body grow" type="text" placeholder="Type your own" value=${text} onChange=${e => setT(e.target.value)} enterKeyHint="done" autoComplete="off" />
-        <button type="submit" class="pk-iconbtn" aria-label="Save"><${Icon} n="check" /></button>
+        <button type="submit" class="pk-iconbtn big" aria-label="Save"><${Icon} n="check" /></button>
       </form>
       <div class="row g8 wrap">${["We're eating out", 'Leftovers', 'Skipping this one'].map(t => html`<${Btn} key=${t} kind="secondary" size="sm" onClick=${() => save(t)}>${t}<//>`)}</div>
       <p class="v2-micro ink3">Or pick from the list</p>
-      <div class="hscroll">${picks.map(r => html`<button type="button" key=${r.id} class="pickitem" onClick=${() => pick(r)}><${Thumb} e=${r.e} s=${60} /><span class="v2-caption clamp2">${r.s}</span></button>`)}</div>
+      <div class="hscroll">${picks.map(r => html`<button type="button" key=${r.id} class="pickitem" onClick=${() => pick(r)}><${Orb} r=${r} s=${60} /><span class="v2-caption clamp2">${r.s}</span></button>`)}</div>
       <div class="row g8 wrap">
         <${Btn} kind="secondary" size="sm" onClick=${() => { close(ov.id); open('build', { k: key, m }); }}>Build a plate from scratch<//>
         ${en && !en.done && html`<${Btn} kind="secondary" size="sm" onClick=${() => { markDone(key); close(ov.id); }}>Mark as done<//>`}
@@ -1816,7 +1792,7 @@ function RheaSheet({ ov }) {
       ${r && r.rhea && !w.rheaOwn[key] ? html`<${RheaNote} r=${r} />` : html`<p class="v2-body ink2">${r ? 'This one is not for sharing. Type what she is having instead.' : 'Nothing of ours to share here. Type what she is having.'}</p>`}
       <form class="row g8" onSubmit=${e => { e.preventDefault(); save(text); }}>
         <input id="rhea-text" class="field v2-body grow" type="text" placeholder="Type her own meal" value=${text} onChange=${e => setT(e.target.value)} enterKeyHint="done" autoComplete="off" />
-        <button type="submit" class="pk-iconbtn" aria-label="Save"><${Icon} n="check" /></button>
+        <button type="submit" class="pk-iconbtn big" aria-label="Save"><${Icon} n="check" /></button>
       </form>
       ${w.rheaOwn[key] && html`<div class="row"><${Btn} kind="secondary" size="sm" onClick=${() => save('')}>Clear her own meal<//></div>`}
     </div>
@@ -1866,8 +1842,8 @@ function RecipeSheet({ ov }) {
   return html`<${Sheet} ov=${ov} full label=${r.n}>
     <div class="scroll col g24 recipe">
       <div class="pad col g12">
-        <div class="recipe-top"><p class="v2-micro ink2">${MEAL[r.m]}${pn ? ' · ' + pn : ''} · ${r.dish} · ${time} min</p><${Food} e=${r.e} s=${116} /></div>
-        <h2 class="v2-title">${en ? entryName(en, s) : r.n}</h2>
+        <div class="recipe-top"><p class="v2-micro ink2">${MEAL[r.m]}${pn ? ' · ' + pn : ''} · ${r.dish} · ${time} min</p><${Orb} r=${r} s=${108} glow /></div>
+        <h2 class="v2-display">${en ? entryName(en, s) : r.n}</h2>
         <div class="row g12 wrap"><span class="row g8"><span class="v2-micro ink3">Filling</span><span class="fill" aria-label=${r.fill + ' of 5'}>${[1, 2, 3, 4, 5].map(i => html`<i key=${i} class=${i <= r.fill ? 'on' : ''}></i>`)}</span></span></div>
         <${Tags} r=${r} s=${s} />
         ${en && en.why && html`<p class="v2-caption ink2 why"><i class="mint"></i>${en.why}</p>`}
@@ -1876,7 +1852,7 @@ function RecipeSheet({ ov }) {
       <div class="pad col g12">
         <p class="v2-micro ink3">Build for</p>
         <${Seg} options=${WHO_OPTS} value=${who} label="Build for" onChange=${setWho} />
-        <p class="row g8 tnum"><span class="v2-number-l">${nf(kcal)}</span><span class="v2-caption ink2">kcal · ${pro} g protein · ${who === 'both' ? 'both portions, cooked once' : 'against a ' + nf(P[who].target) + ' kcal ' + MEAL[r.m].toLowerCase()}</span></p>
+        <p class="readout"><${Dots} v=${kcal} h=${26} /><span class="v2-caption ink2">kcal · ${pro} g protein · ${who === 'both' ? 'both portions, cooked once' : 'against a ' + nf(P[who].target) + ' kcal ' + MEAL[r.m].toLowerCase()}</span></p>
       </div>
       <div class="col g12"><p class="v2-micro ink3 pad">Ingredients</p><div class="hscroll pad">${main.map(tile)}</div></div>
       ${veg.length > 0 && html`<div class="col g12"><p class="v2-micro ink3 pad">Vegetables</p><div class="hscroll pad">${veg.map(tile)}</div></div>`}
@@ -1913,7 +1889,7 @@ function StepTimer({ min }) {
   const C = 2 * Math.PI * 17;
   return html`<button type="button" class="timerbtn" onClick=${() => (end ? setEnd(0) : (left <= 0 && setLeft(total), setEnd(Date.now() + (left > 0 ? left : total) * 1000)))}>
     <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="17" fill="none" stroke="var(--line-hair)" strokeWidth="2" /><circle cx="20" cy="20" r="17" fill="none" stroke="var(--ink-primary)" strokeWidth="2" strokeLinecap="round" strokeDasharray=${C} strokeDashoffset=${C * (1 - left / total)} transform="rotate(-90 20 20)" /></svg>
-    <span class="v2-number-l tnum">${mmss(left)}</span>
+    <${Dots} v=${mmss(left)} h=${22} />
     <span class="v2-label ink2">${left <= 0 ? "Time's up. Restart" : end ? 'Pause' : left < total ? 'Resume' : 'Start the timer'}</span>
   </button>`;
 }
@@ -1939,8 +1915,8 @@ function CookMode({ ov }) {
     <p class="v2-caption ink2">Split the vegetables and everything else evenly.</p>`;
   else body = html`<p class="v2-micro ink2">Step ${steps.slice(0, i + 1).filter(x => x.t === 'step').length} of ${steps.filter(x => x.t === 'step').length}</p><h1 class="v2-display">${st.text}</h1>
     ${st.min > 0 && html`<${StepTimer} key=${i} min=${st.min} />`}`;
-  return html`<div class=${cx('full cook', ov.closing && 'out')} data-theme="beige" role="dialog" aria-modal="true" aria-label=${'Cooking ' + r.n}>
-    <div class="topbar pad"><${IconBtn} n="x" label="Stop cooking" onClick=${() => close(ov.id)} /><span class="v2-micro ink2 grow cook-name">${entryName(en, s)}</span><span class="v2-number ink2 tnum">${i + 1}/${steps.length}</span></div>
+  return html`<div class=${cx('full cook grid-bg', ov.closing && 'out')} data-theme="beige" role="dialog" aria-modal="true" aria-label=${'Cooking ' + r.n}>
+    <div class="topbar pad"><${IconBtn} n="x" label="Stop cooking" onClick=${() => close(ov.id)} /><span class="v2-micro ink2 grow cook-name">${entryName(en, s)}</span><span class="ink2"><${Dots} v=${(i + 1) + '/' + steps.length} h=${16} /></span></div>
     <div class="pad"><${Ticks} n=${steps.length} at=${i + 1} /></div>
     <div class="scroll grow pad cook-body" onPointerDown=${swipeNav}><div class="col g16 pk-enter" key=${i}>${body}</div></div>
     <div class="foot pad row g8">
@@ -2105,7 +2081,7 @@ function GroceriesTab() {
         <button type="button" class="v2-micro ink2 linkish" onClick=${() => open('shoptime')}>Shop · ${w.shop || 'no time set'} <${Icon} n="down" s=${12} /></button>
         <${IconBtn} n="copy" label="Copy the list" onClick=${copy} />
       </div>
-      <p class="row g8 tnum"><span class="v2-number-l">${pr.done} of ${pr.total}</span><span class="v2-caption ink2">${w.stocked ? 'sorted · fridge stocked' : 'sorted · stocked at 80%'}</span></p>
+      <p class="readout"><${Dots} v=${pr.done + '/' + pr.total} h=${30} /><span class="v2-caption ink2">${w.stocked ? 'sorted · fridge stocked' : 'sorted · stocked at 80%'}</span></p>
       <div class="bar"><i class="bar-fill" style=${{ transform: 'scaleX(' + (pr.total ? pr.done / pr.total : 0) + ')' }}></i></div>
       ${!s.hints.groc && html`<p class="v2-caption ink2">Tap to tick. Swipe an item left if the shop is out.</p>`}
     </div>
@@ -2135,13 +2111,13 @@ function MissingSheet({ ov }) {
   const swaps = subs.length ? [] : it.uses.map(k => [k, mealSwapFor(k, it.id, s, list)]).filter(x => x[1]);
   const settle = fn => { const hit = mut(d => { fn(d); return stockedNow(d); }); close(ov.id); if (hit) celebrateStock(hit); };
   return html`<${Sheet} ov=${ov} label="Item not found">
-    <${PipHead} title=${'No ' + it.n.toLowerCase() + '?'} body=${'It is in ' + names.slice(0, 3).join(', ') + (names.length > 3 ? ' and more' : '') + '.'}
+    <${SheetHead} icon="flag" title=${'No ' + it.n.toLowerCase() + '?'} body=${'It is in ' + names.slice(0, 3).join(', ') + (names.length > 3 ? ' and more' : '') + '.'}
       why=${subs.length ? 'Same family, so every meal stays as planned.' : swaps.length ? 'Nothing in the same family, so these are the closest meals.' : null} />
     <div class="pad col sheet-pad mt8">
       ${subs.map(g => html`<${OptRow} key=${g.id} e=${g.e} title=${'Use ' + g.n.toLowerCase() + ' instead'} sub=${it.uses.length + (it.uses.length === 1 ? ' meal updates' : ' meals update') + ', and the list'}
         onClick=${() => { settle(d => { Object.keys(d.week.subs).forEach(k => { if (d.week.subs[k] === it.id) d.week.subs[k] = g.id; }); d.week.subs[it.id] = g.id; delete d.groc.missing[it.key]; }); toast(g.n + ' is on the list instead.'); }} />`)}
       ${swaps.length > 0 && html`<${OptRow} title=${'Swap ' + swaps.length + (swaps.length === 1 ? ' meal' : ' meals')} sub=${swaps.slice(0, 2).map(([k, r]) => dayName(w, +k[0]) + ' ' + MEAL[k[1]].toLowerCase() + ' becomes ' + r.s.toLowerCase()).join(' · ')}
-        onClick=${() => { settle(d => { swaps.forEach(([k, r]) => { d.week.slots[k] = { k: uid(), r: r.id, c: defChoice(r, d), done: false, via: 'pip', why: 'Swapped in, because the shop was out of ' + it.n.toLowerCase() + '.' }; }); delete d.groc.missing[it.key]; }); toast('Meals swapped. The list is updated.'); }} />`}
+        onClick=${() => { settle(d => { swaps.forEach(([k, r]) => { d.week.slots[k] = { k: uid(), r: r.id, c: defChoice(r, d), done: false, via: 'auto', why: 'Swapped in, because the shop was out of ' + it.n.toLowerCase() + '.' }; }); delete d.groc.missing[it.key]; }); toast('Meals swapped. The list is updated.'); }} />`}
       <${OptRow} title="Skip it for now" sub="The meals stay. Sort it out later" onClick=${() => settle(d => { d.groc.missing[it.key] = 'skip'; })} />
       <${OptRow} title="Found it" sub="Tick it off" onClick=${() => settle(d => { delete d.groc.missing[it.key]; d.groc.checked[it.key] = true; })} />
     </div>
@@ -2164,7 +2140,7 @@ function RescueSheet({ ov }) {
     </div>
   <//>`;
   return html`<${Sheet} ov=${ov} label="Packed day">
-    <${PipHead} micro=${Math.min(w.swaps, 2) + ' of 2 swaps used'} title="Packed day?" why=${ov.props.why}
+    <${SheetHead} icon="bolt" micro=${Math.min(w.swaps, 2) + ' of 2 swaps used'} title="Packed day?" why=${ov.props.why}
       body=${canQuick ? "Here's a " + r.quick[1] + "-minute version with what's in the fridge." : entryName(en, s) + ' is already the quick one. It can still move.'} />
     <div class="pad col sheet-pad mt8">
       ${canQuick && html`<${OptRow} title="Make it quicker" sub=${r.quick[0] + ' · ' + r.quick[1] + ' min · same groceries'} onClick=${() => done(quickSwap(key))} />`}
@@ -2188,10 +2164,10 @@ function RoughSheet({ ov }) {
     if (/sweet|crav|choc|sugar|dessert/i.test(t)) setSug(sweetOption(store.s)); else { setNoted(true); setNote(false); }
   };
   return html`<${Sheet} ov=${ov} label="Rough night">
-    <${PipHead} title="Rough night?" body=${noted ? 'Noted for today. ' + body : body} why=${why} />
+    <${SheetHead} icon="moon" title="Rough night?" body=${noted ? 'Noted for today. ' + body : body} why=${why} />
     <div class="pad col g12 sheet-pad mt8">
       ${sug ? html`<p class="v2-body row g8"><i class="mint"></i>Heard. From the dietitian's list: ${sug.n.toLowerCase()}.</p>
-        <${Btn} block onClick=${() => { setRecipe(w.day + 's', sug.id, null, 'pip', 'A sweet option from the dietitian\'s list, because you asked.'); mut(d => { d.week.slots[d.week.day + 's'].at = '4pm'; }); close(ov.id); toast(sug.n + ' is the 4pm snack.'); }}>Add it as the 4pm snack<//>
+        <${Btn} block onClick=${() => { setRecipe(w.day + 's', sug.id, null, 'auto', 'A sweet option from the dietitian\'s list, because you asked.'); mut(d => { d.week.slots[d.week.day + 's'].at = '4pm'; }); close(ov.id); toast(sug.n + ' is the 4pm snack.'); }}>Add it as the 4pm snack<//>
         <${Btn} kind="secondary" block onClick=${() => close(ov.id)}>Not now<//>`
       : note ? html`<form class="row g8" onSubmit=${submit}>
           <input id="rough-note" class="field v2-body grow" type="text" placeholder="I'm craving something sweet" value=${text} onChange=${e => setT(e.target.value)} enterKeyHint="send" autoComplete="off" />
@@ -2232,58 +2208,12 @@ function SnapFlow({ ov }) {
   </div>`;
 }
 
-/* ───────────── Ask Pip ───────────── */
+/* ───────────── Fill my week ───────────── */
 function runFill() {
   const list = fillPlan(store.s);
   list.forEach(([k, en], i) => setTimeout(() => { const cur = store.s.week; if (cur && !cur.slots[k]) putEntry(k, en); }, i * 110));
   setTimeout(() => toast(list.length ? 'Filled ' + list.length + (list.length === 1 ? ' gap' : ' gaps') + '. Tap a meal to see why it is there.' : 'The week is already full.'), list.length * 110 + 150);
 }
-function PipSheet({ ov }) {
-  const s = useS(), w = s.week, active = w && w.status === 'active';
-  const [text, setT] = useState(''), [hear, setHear] = useState(false), endRef = useRef(null);
-  const send = t => { t = (t || '').trim(); if (!t) return; setT(''); pipSay('me', t); const r = pipReply(t, store.s); setTimeout(() => pipSay('pip', r.text, r.actions), 360); };
-  const listen = () => {
-    if (!SPEECH || store.s.hints.noVoice) return;
-    try { const r = new SPEECH(); r.lang = 'en-US'; r.onresult = e => send(e.results[0][0].transcript); r.onend = () => setHear(false); r.onerror = () => { setHear(false); mut(d => { d.hints.noVoice = true; }); pipSay('pip', 'Voice is not available here. Type it instead.'); }; r.start(); setHear(true); } catch (e) { setHear(false); }
-  };
-  useEffect(() => { if (ov.props.listen) listen(); }, []);
-  useEffect(() => { if (endRef.current) endRef.current.scrollIntoView({ block: 'end' }); }, [s.pip.length]);
-  const act = a => {
-    const c = () => close(ov.id);
-    if (a.act === 'rescue') { c(); open('rescue', { k: a.arg }); }
-    else if (a.act === 'rough') { if (!w.rough[w.day]) flagRough(s.me, 0); c(); open('rough'); }
-    else if (a.act === 'snack') { setRecipe(w.day + 's', a.arg, null, 'pip', "A sweet option from the dietitian's list, because you asked."); pipSay('pip', "Added as today's snack."); }
-    else if (a.act === 'view') { c(); open('recipe', { rid: a.arg }); }
-    else if (a.act === 'snap') { c(); open('snap'); }
-    else if (a.act === 'fill') { c(); uiSet({ tab: 'plan' }); runFill(); }
-    else if (a.act === 'plan') { c(); if (!s.planning) startPlanning(); open('plan'); }
-    else if (a.act === 'cook') { c(); open('cook', { k: a.arg }); }
-    else if (a.act === 'recipe') { c(); open('recipe', { k: a.arg }); }
-    else if (a.act === 'tab') { c(); uiSet({ tab: a.arg }); }
-    else if (a.act === 'missing') { mut(d => { d.groc.missing[a.arg] = 'flag'; delete d.groc.checked[a.arg]; }); c(); open('missing', { key: a.arg }); }
-    else if (a.act === 'leftovers') { setText(a.arg, 'Leftovers'); pipSay('pip', 'Set. Leftovers it is.'); }
-    else pipSay('pip', 'Left as it is.');
-  };
-  const up = active ? upcomingKey(w) : null, en = up ? w.slots[up] : null;
-  const head = en ? 'Next is ' + entryName(en, s).toLowerCase() + (en.r ? ', ' + entryTime(en, s) + ' minutes.' : '.') : active ? 'Today is done.' : s.planning ? 'The week is half planned.' : "Next week's deck is ready.";
-  const chips = active ? ['Busy day', 'Rough night', 'Craving something sweet', 'Log a snack', "We're eating out", "What's Rhea having?"] : ['Plan the week', 'Log a snack'];
-  return html`<${Sheet} ov=${ov} label="Ask Pip" cls="pipsheet">
-    <div class="pad col g12 pip-head"><${Aura} s=${44} alive cls=${hear ? 'listening' : ''} /><h2 class="v2-title">${hear ? 'Listening.' : head}</h2></div>
-    <div class="scroll pad col g12 pipchat">
-      ${s.pip.map(msg => (msg.who === 'me' ? html`<p key=${msg.id} class="v2-body ink2 pk-enter">${msg.text}</p>`
-        : html`<div key=${msg.id} class="col g8 pk-enter"><p class="v2-body row g8 top"><i class="mint"></i><span class="grow">${msg.text}</span></p>
-            ${msg.actions && msg.actions.length > 0 && html`<div class="row g8 wrap">${msg.actions.map((a, i) => html`<${Btn} key=${i} kind="secondary" size="sm" onClick=${() => act(a)}>${a.label}<//>`)}</div>`}</div>`))}
-      <i ref=${endRef}></i>
-    </div>
-    <div class="hscroll pad">${chips.map(c => html`<${Btn} key=${c} kind="secondary" size="sm" onClick=${() => send(c)}>${c}<//>`)}</div>
-    <form class="pad sheet-pad row g8 mt8" onSubmit=${e => { e.preventDefault(); send(text); }}>
-      <input id="pip-input" class="field v2-body grow" type="text" placeholder="Ask Pip" value=${text} onChange=${e => setT(e.target.value)} enterKeyHint="send" autoComplete="off" />
-      ${SPEECH && !s.hints.noVoice && !text.trim() ? html`<button type="button" class="pk-ask__mic" aria-label="Talk to Pip" onClick=${listen}><${Icon} n="mic" /></button>`
-        : html`<button type="submit" class="pk-ask__mic" aria-label="Send"><${Icon} n="send" /></button>`}
-    </form>
-  <//>`;
-}
-
 /* ───────────── Profile ───────────── */
 function ArcSheet({ ov }) {
   const p = ov.props, [v, setV] = useState(p.value);
@@ -2335,6 +2265,7 @@ function ProfileTab() {
       <${Row} label="Holding the phone" sub="Swipes, ratings and snacks save for this person" right=${html`<${Toggle} id="pf-me" on=${s.me === who} label="Holding the phone" onChange=${v => mut(d => { d.me = v ? who : other(who); })} />`} />
       <${Row} label="Sleep-aware days" sub="Opt in. After a short night, the day is planned to be more filling" right=${html`<${Toggle} id="pf-sleep" on=${p.sleepOn} label="Sleep-aware days" onChange=${v => set('sleepOn', v)} />`} />
       ${p.sleepOn && html`<${Row} label="A short night is under" value=${p.sleepUnder + ' h'} onClick=${() => wheel('A short night is under', 'sleepUnder', 3, 8, .5, 2, 'hours', { fmt: v => String(v), note: 'Only ' + PEOPLE[who] + ' sees this number.' })} />`}
+      ${p.sleepOn && html`<${Row} label="Last night" sub="Stands in for the wearable in this prototype" value=${p.lastSleep ? fmtHours(p.lastSleep) : 'not logged'} onClick=${() => open('wheel', { title: 'Last night', micro: PEOPLE[who] + ' · sleep', value: p.lastSleep || 7, min: 2, max: 10, step: .5, major: 2, unit: 'hours', fmt: v => String(v), note: 'Under ' + p.sleepUnder + ' hours, today is offered as a more filling day.', onChange: v => logSleep(who, v) })} />`}
     </div>
     <div class="col">
       <p class="v2-micro ink3 sec">Household</p>
@@ -2359,7 +2290,7 @@ function DemoSheet({ ov }) {
   const go = fn => { close(ov.id); fn(); };
   return html`<${Sheet} ov=${ov} label="Prototype controls">
     <div class="pad col g8"><p class="v2-micro ink3">Prototype controls</p><h2 class="v2-title">Move through the week</h2>
-      <p class="v2-body ink2">${PEOPLE[other(me)]}'s swipes and ratings are simulated on this phone. Days move by hand.</p></div>
+      <p class="v2-body ink2">Days move by hand in this prototype. Everything else is real and saved on this phone.</p></div>
     <div class="pad col sheet-pad mt8">
       ${active && w.day < 6 && html`<${OptRow} title=${'Go to ' + dayName(w, w.day + 1, 1)} sub="Moves today forward by one day" onClick=${() => go(() => { mut(d => { d.week.day++; }); uiSet({ tab: 'home' }); })} />`}
       ${active && html`<${OptRow} title="Simulate a rough night" sub=${'Reads as 4 h 40 min of sleep for ' + PEOPLE[me] + '. Turns on sleep-aware days'} onClick=${() => go(() => { mut(d => { d.profiles[me].sleepOn = true; }); flagRough(me, 4.67); uiSet({ tab: 'home' }); open('rough'); })} />`}
@@ -2373,7 +2304,7 @@ function DemoSheet({ ov }) {
 
 /* ───────────── App shell ───────────── */
 const OVERLAYS = { plan: PlanFlow, recipe: RecipeSheet, choice: ChoiceSheet, slot: SlotSheet, rhea: RheaSheet, cook: CookMode, rate: RateSheet, build: BuildSheet,
-  celebrate: Celebrate, confirm: ConfirmSheet, wheel: WheelSheet, arc: ArcSheet, missing: MissingSheet, shoptime: ShopSheet, list: ListSheet, pip: PipSheet,
+  celebrate: Celebrate, confirm: ConfirmSheet, wheel: WheelSheet, arc: ArcSheet, missing: MissingSheet, shoptime: ShopSheet, list: ListSheet,
   snap: SnapFlow, rescue: RescueSheet, rough: RoughSheet, demo: DemoSheet };
 const TABVIEW = { home: Home, plan: PlanTab, groceries: GroceriesTab, profile: ProfileTab };
 function App() {
@@ -2383,7 +2314,7 @@ function App() {
   const Tab = TABVIEW[u.tab] || Home;
   return html`<${React.Fragment}>
     <div class="tabview pk-enter" key=${u.tab}><${Tab} /></div>
-    <i class=${cx('dockbg', (u.tab === 'home' || u.tab === 'plan') && 'tall')}></i>
+    <i class="dockbg"></i>
     <${TabBar} />
     ${u.stack.map(o => { const C = OVERLAYS[o.type]; return C ? html`<${C} key=${o.id} ov=${o} />` : null; })}
     <${Toast} />
